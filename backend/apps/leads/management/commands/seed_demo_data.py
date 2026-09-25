@@ -24,7 +24,7 @@ class Command(BaseCommand):
         self.stdout.write('Seeding institutional admission demo data...')
 
         # 1. Manager & Counsellors
-        manager, _ = User.objects.get_or_create(
+        manager_priya, _ = User.objects.get_or_create(
             username='manager_priya',
             defaults={
                 'email': 'priya.sharma@edulead.edu',
@@ -34,8 +34,21 @@ class Command(BaseCommand):
                 'phone': '+919876500001',
             }
         )
-        manager.set_password('Password@123')
-        manager.save()
+        manager_priya.set_password('Password@123')
+        manager_priya.save()
+
+        manager_sahal, _ = User.objects.get_or_create(
+            username='manager_sahal',
+            defaults={
+                'email': 'sahal@edulead.edu',
+                'first_name': 'Mohd',
+                'last_name': 'Sahal',
+                'role': UserRole.MANAGER,
+                'phone': '+919876500000',
+            }
+        )
+        manager_sahal.set_password('Password@123')
+        manager_sahal.save()
 
         counsellor_1, _ = User.objects.get_or_create(
             username='counsellor_amit',
@@ -50,6 +63,20 @@ class Command(BaseCommand):
         )
         counsellor_1.set_password('Password@123')
         counsellor_1.save()
+
+        counsellor_honey, _ = User.objects.get_or_create(
+            username='counsellor_Honey',
+            defaults={
+                'email': 'Honey@edulead.edu',
+                'first_name': 'Sinu',
+                'last_name': 'Honey',
+                'role': UserRole.COUNSELLOR,
+                'phone': '+919876500005',
+                'is_available_for_assignment': True,
+            }
+        )
+        counsellor_honey.set_password('Password@123')
+        counsellor_honey.save()
 
         counsellor_2, _ = User.objects.get_or_create(
             username='counsellor_neha',
@@ -85,7 +112,7 @@ class Command(BaseCommand):
             defaults={
                 'name': 'B.Tech in Computer Science & AI',
                 'degree_level': DegreeLevel.UNDERGRADUATE,
-                'department': 'School of Computing',
+                'department': 'School of Engineering',
                 'duration_years': 4.0,
                 'fee_per_year': 320000.00,
             }
