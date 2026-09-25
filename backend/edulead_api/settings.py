@@ -51,6 +51,7 @@ AUTH_USER_MODEL = 'authentication.User'
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,10 +81,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'edulead_api.wsgi.application'
 
 # Database Configuration
-db_engine = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
+database_url = os.getenv('DATABASE_URL')
 use_sqlite = os.getenv('USE_SQLITE_FALLBACK', 'False').lower() in ('true', '1', 'yes')
 
-if use_sqlite:
+if database_url:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+    # If MySQL on TiDB Cloud or DB_SSL requested
+    if 'mysql' in DATABASES['default']['ENGINE']:
+        options = DATABASES['default'].setdefault('OPTIONS', {})
+        options.setdefault('charset', 'utf8mb4')
+        options.setdefault('init_command', "SET sql_mode='STRICT_TRANS_TABLES'")
+        if os.getenv('DB_SSL', 'False').lower() in ('true', '1', 'yes') or 'tidbcloud' in database_url:
+            try:
+                import certifi
+                options['ssl'] = {'ca': certifi.where()}
+            except ImportError:
+                options['ssl'] = {'check_hostname': False}
+elif use_sqlite:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -91,18 +112,28 @@ if use_sqlite:
         }
     }
 else:
+    db_engine = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
+    db_host = os.getenv('DB_HOST', '127.0.0.1')
+    db_options = {
+        'charset': 'utf8mb4',
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    }
+    if os.getenv('DB_SSL', 'False').lower() in ('true', '1', 'yes') or 'tidbcloud' in db_host:
+        try:
+            import certifi
+            db_options['ssl'] = {'ca': certifi.where()}
+        except ImportError:
+            db_options['ssl'] = {'check_hostname': False}
+
     DATABASES = {
         'default': {
             'ENGINE': db_engine,
             'NAME': os.getenv('DB_NAME', 'edulead_db'),
             'USER': os.getenv('DB_USER', 'root'),
             'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+            'HOST': db_host,
             'PORT': os.getenv('DB_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
+            'OPTIONS': db_options,
         }
     }
 
@@ -123,6 +154,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -170,6 +209,24 @@ cors_allowed_raw = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_allowed_raw.split(',') if origin.strip()]
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF Configuration
+csrf_trusted_raw = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if csrf_trusted_raw:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_raw.split(',') if origin.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        origin for origin in CORS_ALLOWED_ORIGINS
+        if origin.startswith('http://') or origin.startswith('https://')
+    ]
+
+# Production Security Headers
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 'yes')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
 # Lead Management Business Constants
 LEAD_FRESH_DAYS_MAX = int(os.getenv('LEAD_FRESH_DAYS_MAX', 2))
 LEAD_AGEING_DAYS_MAX = int(os.getenv('LEAD_AGEING_DAYS_MAX', 7))
+
