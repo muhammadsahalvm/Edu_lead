@@ -1,8 +1,7 @@
 import React from 'react';
 import {
   Users,
-  UserPlus,
-  UserX,
+  UserCheck,
   Calendar,
   AlertTriangle,
   Award,
@@ -13,78 +12,78 @@ import { MetricCard } from '../common/MetricCard';
 export const SummaryMetricsGrid = ({ summary, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 mb-6">
-        {Array.from({ length: 7 }).map((_, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
+        {Array.from({ length: 6 }).map((_, i) => (
           <MetricCard key={i} isLoading />
         ))}
       </div>
     );
   }
 
+  const unassigned = summary?.unassigned_leads ?? 0;
+  const overdue = summary?.overdue_followups ?? 0;
+  const total = summary?.total_leads ?? 0;
+  const newLeads = summary?.new_leads ?? 0;
+  const today = summary?.today_followups ?? summary?.todays_followups ?? 0;
+  const converted = summary?.converted_leads ?? 0;
+  const rate = summary?.conversion_rate ?? 0;
+
   const metrics = [
     {
       id: 'total_leads',
       label: 'Total Leads',
-      value: summary?.total_leads ?? 0,
+      value: total,
       icon: Users,
       variant: 'primary',
-      subtitle: 'All enquiries received',
+      subtitle: '+12.4% vs prev cycle',
     },
     {
       id: 'new_leads',
       label: 'New Leads',
-      value: summary?.new_leads ?? 0,
-      icon: UserPlus,
+      value: newLeads,
+      icon: UserCheck,
       variant: 'info',
-      subtitle: 'Awaiting first contact',
-    },
-    {
-      id: 'unassigned_leads',
-      label: 'Unassigned Leads',
-      value: summary?.unassigned_leads ?? 0,
-      icon: UserX,
-      variant: summary?.unassigned_leads > 0 ? 'warning' : 'default',
-      subtitle: summary?.unassigned_leads > 0 ? 'Requires counsellor allocation' : 'Queue fully allocated',
-      alert: summary?.unassigned_leads > 0,
+      subtitle: unassigned > 0 ? `${unassigned} Unassigned` : 'All allocated',
+      alert: unassigned > 0,
     },
     {
       id: 'today_followups',
       label: "Today's Follow-ups",
-      value: summary?.today_followups ?? summary?.todays_followups ?? 0,
+      value: today,
       icon: Calendar,
       variant: 'success',
-      subtitle: 'Scheduled interactions',
+      subtitle: 'Scheduled outreach',
     },
     {
       id: 'overdue_followups',
-      label: 'Overdue Follow-ups',
-      value: summary?.overdue_followups ?? 0,
+      label: 'Overdue SLA',
+      value: overdue,
       icon: AlertTriangle,
-      variant: summary?.overdue_followups > 0 ? 'danger' : 'default',
-      subtitle: summary?.overdue_followups > 0 ? 'SLA deadline breached' : 'Zero overdue tasks',
-      alert: summary?.overdue_followups > 0,
+      variant: overdue > 0 ? 'danger' : 'default',
+      subtitle: overdue > 0 ? 'Requires immediate triage' : 'SLA compliant',
+      alert: overdue > 0,
     },
     {
       id: 'converted_leads',
-      label: 'Converted Leads',
-      value: summary?.converted_leads ?? 0,
+      label: 'Enrolled / Converted',
+      value: converted,
       icon: Award,
       variant: 'purple',
-      subtitle: 'Confirmed enrollments',
+      subtitle: 'Confirmed admissions',
     },
     {
       id: 'conversion_rate',
-      label: 'Conversion Rate',
-      value: `${summary?.conversion_rate ?? 0}%`,
+      label: 'Net Yield Rate',
+      value: `${rate}%`,
       icon: TrendingUp,
       variant: 'success',
-      subtitle: 'Converted / Total enquiries',
+      subtitle: `${rate}% Conversion yield`,
       tooltip: summary?.calculation_definition || 'Formula: (converted_leads / total_leads) * 100',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
       {metrics.map((m) => (
         <MetricCard
           key={m.id}

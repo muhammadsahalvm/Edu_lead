@@ -15,8 +15,6 @@ import {
   Award,
   BookOpen,
   Share2,
-  CalendarCheck,
-  MessageSquare,
 } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card } from '../components/common/Card';
@@ -275,12 +273,14 @@ export const LeadDetailPage = () => {
             {lead.first_name?.[0] || 'L'}
           </div>
           <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">{lead.full_name}</h2>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900">{lead.full_name}</h2>
-              <span className="font-mono text-xs text-slate-400">({lead.lead_number})</span>
+              <span className="font-mono-data text-xs text-slate-600 font-semibold bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                #{lead.lead_number}
+              </span>
               <StatusBadge status={lead.status} />
               <PriorityBadge priority={lead.priority} />
-              <AgeingBadge category={lead.ageing_category} />
+              <AgeingBadge category={lead.ageing_category} days={lead.age_days} />
             </div>
             <p className="text-xs text-slate-500 mt-1">
               Course: <strong className="text-slate-800">{lead.course_name || 'General Enquiry'}</strong>

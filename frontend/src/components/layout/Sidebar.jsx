@@ -7,11 +7,11 @@ import {
   BarChart3,
   UserPlus,
   GraduationCap,
-  ToggleLeft,
-  ToggleRight,
   LogOut,
   Shield,
-  UserCheck,
+  Building2,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -25,8 +25,8 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
     if (res.success) {
       toast.info(
         res.user.is_available_for_assignment
-          ? 'You are now marked as AVAILABLE for lead assignment.'
-          : 'You are now marked as AWAY / UNAVAILABLE for lead assignment.'
+          ? 'You are now marked as AVAILABLE for automated round-robin lead assignments.'
+          : 'You are now marked as AWAY / UNAVAILABLE for lead assignments.'
       );
     } else {
       toast.error(res.error || 'Failed to update assignment status.');
@@ -38,186 +38,237 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
     toast.info('You have been logged out securely.');
   };
 
-  // Role-distinguished navigation
-  const navItems = isManager
-    ? [
-        {
-          to: '/dashboard',
-          label: 'Dashboard',
-          icon: LayoutDashboard,
-        },
-        {
-          to: '/leads',
-          label: 'Leads',
-          icon: Users,
-        },
-        {
-          to: '/followups',
-          label: 'Follow-ups',
-          icon: CalendarCheck,
-        },
-        {
-          to: '/reports',
-          label: 'Reports',
-          icon: BarChart3,
-        },
-      ]
-    : [
-        {
-          to: '/dashboard',
-          label: 'Dashboard',
-          icon: LayoutDashboard,
-        },
-        {
-          to: '/leads',
-          label: 'My Leads',
-          icon: Users,
-        },
-        {
-          to: '/followups',
-          label: 'Follow-ups',
-          icon: CalendarCheck,
-        },
-      ];
+  const displayName = user?.first_name
+    ? `${user.first_name} ${user.last_name || ''}`.trim()
+    : user?.username || 'Staff User';
+
+  const userRoleLabel = isManager
+    ? 'Admissions Director (Manager)'
+    : 'Admissions Counsellor';
 
   return (
     <>
       {/* Mobile backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs md:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs md:hidden transition-opacity"
           onClick={onCloseMobile}
         />
       )}
 
       {/* Sidebar container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-slate-950 text-slate-300 border-r border-slate-800/80 flex flex-col transition-transform duration-200 ease-in-out md:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white text-slate-700 border-r border-slate-200/90 flex flex-col justify-between transition-transform duration-200 ease-in-out md:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Brand / Logo */}
-        <div className="h-16 px-5 flex items-center justify-between border-b border-slate-800/80 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
-              <GraduationCap className="w-4 h-4" />
+        <div className="flex flex-col flex-1 overflow-y-auto">
+          {/* Brand & Institution Badge */}
+          <div className="p-4 border-b border-slate-200/80 flex flex-col gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+                <GraduationCap className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-slate-900 text-base leading-tight tracking-tight">
+                  EduLead
+                </span>
+                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                  Admissions CRM
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="text-sm font-bold tracking-tight text-white block leading-none">
-                EduLead
-              </span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400 mt-1 block">
-                Admission CRM
+
+            {/* Institution Context Pill */}
+            <div className="mt-0.5 bg-slate-100/80 px-2.5 py-1 rounded-md border border-slate-200/60 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 overflow-hidden">
+                <Building2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <span className="text-[11px] text-slate-800 font-medium truncate">
+                  EduLead Institute
+                </span>
+              </div>
+              <span className="font-mono-data text-[10px] bg-white text-slate-600 px-1.5 py-0.5 rounded border border-slate-200/50 shadow-2xs font-semibold">
+                Fall '25
               </span>
             </div>
           </div>
-          <span
-            className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${
-              isManager
-                ? 'bg-purple-950/80 text-purple-300 border-purple-800/80'
-                : 'bg-indigo-950/80 text-indigo-300 border-indigo-800/80'
-            }`}
-          >
-            {isManager ? 'Manager' : 'Counsellor'}
-          </span>
-        </div>
 
-        {/* Primary Action Button */}
-        <div className="p-3.5 border-b border-slate-800/60">
-          <NavLink
-            to="/leads/new"
-            onClick={onCloseMobile}
-            className="flex items-center justify-center gap-2 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-xs active:scale-[0.99]"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>+ Add Lead</span>
-          </NavLink>
-        </div>
+          {/* Navigation Links */}
+          <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+            <span className="px-2.5 pb-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Operations
+            </span>
 
-        {/* Navigation list */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            {isManager ? 'Operations & Management' : 'Daily Execution'}
-          </div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
+            <NavLink
+              to="/dashboard"
+              onClick={onCloseMobile}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                }`
+              }
+            >
+              <div className="flex items-center gap-2.5">
+                <LayoutDashboard className="w-4 h-4 shrink-0" />
+                <span>Dashboard</span>
+              </div>
+            </NavLink>
+
+            <NavLink
+              to="/leads"
+              onClick={onCloseMobile}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                }`
+              }
+            >
+              <div className="flex items-center gap-2.5">
+                <Users className="w-4 h-4 shrink-0" />
+                <span>{isManager ? 'All Leads' : 'My Leads'}</span>
+              </div>
+              <span className="font-mono-data text-[10px] bg-slate-100 text-slate-600 group-hover:bg-slate-200 px-1.5 py-0.5 rounded-full font-medium">
+                Pipeline
+              </span>
+            </NavLink>
+
+            <NavLink
+              to="/followups"
+              onClick={onCloseMobile}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                }`
+              }
+            >
+              <div className="flex items-center gap-2.5">
+                <CalendarCheck className="w-4 h-4 shrink-0" />
+                <span>Follow-ups</span>
+              </div>
+              <span className="font-mono-data text-[10px] bg-rose-50 text-rose-700 border border-rose-200/80 px-1.5 py-0.5 rounded-full font-semibold">
+                Tasks
+              </span>
+            </NavLink>
+
+            <NavLink
+              to="/leads/new"
+              onClick={onCloseMobile}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                }`
+              }
+            >
+              <div className="flex items-center gap-2.5">
+                <UserPlus className="w-4 h-4 shrink-0" />
+                <span>Quick Intake</span>
+              </div>
+            </NavLink>
+
+            {/* Analytics & System Section */}
+            <span className="px-2.5 pt-4 pb-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Analytics & System
+            </span>
+
+            {isManager && (
               <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/dashboard'}
+                to="/reports"
                 onClick={onCloseMobile}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg transition-all ${
+                  `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-slate-800/90 text-white font-semibold shadow-xs border-l-2 border-indigo-500 pl-2.5'
-                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                   }`
                 }
               >
-                <Icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-slate-200" />
-                <span>{item.label}</span>
+                <div className="flex items-center gap-2.5">
+                  <BarChart3 className="w-4 h-4 shrink-0" />
+                  <span>Reports & Export</span>
+                </div>
               </NavLink>
-            );
-          })}
-        </nav>
+            )}
 
-        {/* Counsellor Availability Toggle (if applicable) */}
-        {isCounsellor && (
-          <div className="p-3 mx-3 mb-3 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-medium text-slate-300 text-[11px]">Assignment Queue</span>
-              <button
-                type="button"
-                onClick={handleToggleAvailability}
-                aria-label="Toggle lead assignment queue status"
-                aria-pressed={!!user?.is_available_for_assignment}
-                className="text-slate-300 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500 rounded focus-visible:outline-none"
-                title="Toggle lead assignment queue status"
-              >
-                {user?.is_available_for_assignment ? (
-                  <ToggleRight className="w-5 h-5 text-emerald-400" />
-                ) : (
-                  <ToggleLeft className="w-5 h-5 text-slate-500" />
-                )}
-              </button>
+            {/* Counsellor Availability Toggle */}
+            {isCounsellor && (
+              <div className="mt-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-slate-700">
+                    Lead Queue
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleToggleAvailability}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
+                      user?.is_available_for_assignment
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
+                    {user?.is_available_for_assignment ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        <span>Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-3 h-3 text-amber-600" />
+                        <span>Paused</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-500 mt-1 leading-normal">
+                  {user?.is_available_for_assignment
+                    ? 'Receiving round-robin enquiries'
+                    : 'Queue paused for campus tours'}
+                </p>
+              </div>
+            )}
+          </nav>
+        </div>
+
+        {/* Bottom Profile Bar */}
+        <div className="p-3 border-t border-slate-200/80 bg-slate-50/50 flex flex-col gap-2">
+          <div className="p-2 rounded-lg bg-white border border-slate-200/80 flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center justify-center font-bold text-xs shrink-0">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex flex-col truncate">
+                <span className="text-xs font-semibold text-slate-900 truncate leading-tight">
+                  {displayName}
+                </span>
+                <span className="text-[10px] text-slate-500 truncate leading-tight">
+                  {userRoleLabel}
+                </span>
+              </div>
             </div>
-            <p className="text-[10px] text-slate-400">
-              {user?.is_available_for_assignment ? (
-                <span className="text-emerald-400 font-medium">● Available for auto-routing</span>
-              ) : (
-                <span className="text-slate-500">○ Paused / Away</span>
-              )}
-            </p>
+            {isManager && (
+              <Shield className="w-3.5 h-3.5 text-purple-600 shrink-0" title="Institution Manager" />
+            )}
           </div>
-        )}
 
-        {/* User Profile & Logout section in footer */}
-        <div className="p-3.5 border-t border-slate-800/80 bg-slate-950/90 shrink-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-slate-800 text-slate-200 font-semibold text-xs flex items-center justify-center border border-slate-700 shrink-0">
-                {user?.first_name?.[0] || user?.username?.[0] || 'U'}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-slate-100 truncate leading-tight">
-                  {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : user?.username}
-                </p>
-                <p className="text-[10px] text-slate-500 truncate leading-tight mt-0.5">
-                  {user?.email || (isManager ? 'Manager' : 'Counsellor')}
-                </p>
-              </div>
-            </div>
-
+          <div className="flex items-center justify-between px-1">
             <button
               type="button"
               onClick={handleLogout}
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-900 rounded-lg transition-colors shrink-0"
-              title="Sign out of admission portal"
-              aria-label="Logout"
+              className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600 hover:text-rose-600 py-1 transition-colors"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
             </button>
+            <span className="font-mono-data text-[10px] text-slate-400">
+              v1.0.0
+            </span>
           </div>
         </div>
       </aside>

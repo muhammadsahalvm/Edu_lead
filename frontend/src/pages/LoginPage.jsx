@@ -60,44 +60,47 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Subtle background glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Subtle institutional grid / ambient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none opacity-60" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex items-center justify-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md">
+          <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm ring-1 ring-indigo-700/20">
             <GraduationCap className="w-5 h-5" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white">EduLead</span>
+          <div>
+            <span className="text-xl font-bold tracking-tight text-slate-900 block leading-tight">EduLead</span>
+            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Operational Console</span>
+          </div>
         </div>
-        <h2 className="mt-4 text-center text-base font-semibold text-slate-200">
+        <h2 className="mt-5 text-center text-lg font-bold text-slate-900 tracking-tight">
           Admissions Management Portal
         </h2>
-        <p className="mt-1 text-center text-xs text-slate-400">
-          Operational CRM for Higher Education Enquiries, Counseling & Conversions
+        <p className="mt-1 text-center text-xs text-slate-500 max-w-xs mx-auto">
+          Secure CRM for Higher Education Enquiries, Counseling Workflows & Conversions
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-slate-900 border border-slate-800/90 py-8 px-6 shadow-xl rounded-2xl sm:px-8">
+        <div className="stitch-card p-6 sm:p-8 bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
           {error && (
             <div
               role="alert"
-              className="mb-5 p-3 rounded-lg bg-rose-950/60 border border-rose-800/80 text-rose-300 text-xs flex items-start gap-2.5"
+              className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5 font-medium"
             >
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-              <div className="flex-1 font-medium">{error}</div>
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
+              <div className="flex-1">{error}</div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Username or Staff Identifier
+              <label htmlFor="username" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Staff Identifier / Username
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -109,17 +112,17 @@ export const LoginPage = () => {
                   placeholder="e.g. manager_priya or counsellor_amit"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-xs placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="block w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label htmlFor="password" className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Security Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -131,7 +134,7 @@ export const LoginPage = () => {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-xs placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="block w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-xs"
                 />
               </div>
             </div>
@@ -142,7 +145,7 @@ export const LoginPage = () => {
                 variant="primary"
                 size="md"
                 isLoading={isSubmitting}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 font-semibold"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-xs"
               >
                 Sign In to Console
               </Button>
@@ -150,22 +153,22 @@ export const LoginPage = () => {
           </form>
 
           {/* Assessment quick-login helper */}
-          <div className="mt-6 pt-5 border-t border-slate-800 text-center">
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2.5">
+          <div className="mt-6 pt-5 border-t border-slate-100 text-center">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2.5">
               Quick Fill Assessment Accounts
             </p>
-            <div className="flex gap-2.5">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => fillQuickCredentials('manager')}
-                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition-colors"
+                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-md border border-slate-200 transition-colors hover:border-slate-300"
               >
                 Manager Demo
               </button>
               <button
                 type="button"
                 onClick={() => fillQuickCredentials('counsellor')}
-                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition-colors"
+                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-md border border-slate-200 transition-colors hover:border-slate-300"
               >
                 Counsellor Demo
               </button>
@@ -174,7 +177,7 @@ export const LoginPage = () => {
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-500">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Institutional JWT with Refresh Token Rotation</span>
         </div>
       </div>

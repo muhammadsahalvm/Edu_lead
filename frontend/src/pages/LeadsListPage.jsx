@@ -3,25 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Search,
-  Filter,
   X,
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
   Calendar,
-  User,
   ExternalLink,
   RefreshCw,
-  Clock,
-  Phone,
-  Mail,
 } from 'lucide-react';
-import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { StatusBadge, AgeingBadge, PriorityBadge } from '../components/common/Badge';
 import { EmptyState } from '../components/common/EmptyState';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
 import { ErrorState } from '../components/common/ErrorState';
 import { leadsService } from '../api/leads';
@@ -67,7 +60,7 @@ const AGEING_CHOICES = [
 export const LeadsListPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { isManager, isCounsellor } = useAuth();
+  const { isManager } = useAuth();
 
   // Data states
   const [leads, setLeads] = useState([]);
@@ -88,7 +81,6 @@ export const LeadsListPage = () => {
   const [ageingFilter, setAgeingFilter] = useState('');
   const [ordering, setOrdering] = useState('-created_at');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
 
   // Debounce search input
   useEffect(() => {
@@ -194,55 +186,61 @@ export const LeadsListPage = () => {
   };
 
   const totalPages = Math.ceil(totalCount / 20) || 1;
-  const pageTitle = isManager ? 'Admission Leads Directory' : 'My Assigned Leads';
-  const pageSubtitle = isManager
-    ? `Monitor, filter, and manage all student enquiries across admissions channels (${totalCount} records)`
-    : `Candidate enquiries assigned to your counseling queue (${totalCount} records)`;
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={pageTitle}
-        subtitle={pageSubtitle}
-        breadcrumbs={[
-          { label: 'Dashboard', to: '/dashboard' },
-          { label: isManager ? 'Leads' : 'My Leads' },
-        ]}
-        action={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              icon={RefreshCw}
-              isLoading={isLoading}
-              onClick={fetchLeads}
-            >
-              Refresh
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              icon={Plus}
-              onClick={() => navigate('/leads/new')}
-            >
-              + Create Lead
-            </Button>
+      {/* Stitch Header Row */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+              {isManager ? 'Admissions Leads' : 'My Assigned Leads'}
+            </h1>
+            <span className="font-mono-data text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-semibold border border-slate-200/80">
+              {totalCount} total leads
+            </span>
           </div>
-        }
-      />
+          <p className="text-xs text-slate-500 mt-1">
+            Showing <span className="font-semibold text-slate-900 font-mono-data">{leads.length}</span> candidates across active Fall '25 intake pipelines
+          </p>
+        </div>
 
-      {/* Search & Filter Toolbar */}
-      <Card bodyClassName="p-4 space-y-3" className="shadow-xs">
-        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-          {/* Search bar */}
-          <div className="relative w-full sm:w-96">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="flex items-center gap-2.5 self-start lg:self-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            isLoading={isLoading}
+            onClick={fetchLeads}
+            className="h-9 bg-white"
+          >
+            Refresh
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            icon={Plus}
+            onClick={() => navigate('/leads/new')}
+            className="h-9 shadow-xs"
+          >
+            + Add New Lead
+          </Button>
+        </div>
+      </div>
+
+      {/* Multi-Dimensional Filter Toolbar (Stitch) */}
+      <Card bodyClassName="p-4 space-y-3" className="shadow-xs border-slate-200/90">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
+          {/* Search box */}
+          <div className="lg:col-span-4 relative flex items-center">
+            <Search className="w-4 h-4 absolute left-3 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search by student name, phone, email, or lead ID..."
+              placeholder="Search by student name, phone, email, or application #..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+              className="w-full h-9 pl-9 pr-8 text-xs rounded-lg border border-slate-200/90 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/60 focus:bg-white transition-all placeholder:text-slate-400"
             />
             {search && (
               <button
@@ -255,118 +253,90 @@ export const LeadsListPage = () => {
             )}
           </div>
 
-          {/* Right Controls: Filters & Sort */}
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border transition-colors ${
-                showFilters || hasActiveFilters
-                  ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
-                  : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
-              }`}
+          {/* Status Filter */}
+          <div className="lg:col-span-2">
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
             >
-              <Filter className="w-3.5 h-3.5" />
-              <span>Filters</span>
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-indigo-600" />
-              )}
-            </button>
-
-            {/* Sorting selector */}
-            <div className="flex items-center gap-1.5 text-xs">
-              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-              <select
-                value={ordering}
-                onChange={(e) => {
-                  setOrdering(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
-              >
-                <option value="-created_at">Newest First</option>
-                <option value="created_at">Oldest First</option>
-                <option value="-updated_at">Recently Updated</option>
-                <option value="first_name">Candidate Name (A-Z)</option>
-                <option value="next_followup_at">Next Follow-up Due</option>
-              </select>
-            </div>
+              <option value="">All Statuses</option>
+              {STATUS_CHOICES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-        {/* Collapsible Filter Panel */}
-        {showFilters && (
-          <div className="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-            {/* Status Filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">Status</label>
+          {/* Course Filter */}
+          <div className="lg:col-span-2">
+            <select
+              value={courseFilter}
+              onChange={(e) => {
+                setCourseFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
+            >
+              <option value="">All Programs</option>
+              {courses.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.code} - {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Source Filter */}
+          <div className="lg:col-span-2">
+            <select
+              value={sourceFilter}
+              onChange={(e) => {
+                setSourceFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
+            >
+              <option value="">All Sources</option>
+              {SOURCE_CHOICES.map((src) => (
+                <option key={src.value} value={src.value}>
+                  {src.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Counsellor / Priority Filter */}
+          <div className="lg:col-span-2">
+            {isManager ? (
               <select
-                value={statusFilter}
+                value={counsellorFilter}
                 onChange={(e) => {
-                  setStatusFilter(e.target.value);
+                  setCounsellorFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
+                className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
               >
-                <option value="">All Statuses</option>
-                {STATUS_CHOICES.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Course Filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">Program</label>
-              <select
-                value={courseFilter}
-                onChange={(e) => {
-                  setCourseFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
-              >
-                <option value="">All Courses</option>
-                {courses.map((c) => (
+                <option value="">All Counsellors</option>
+                <option value="unassigned">⚠️ Unassigned Leads</option>
+                {counsellors.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.code} - {c.name}
+                    {c.full_name || c.username}
                   </option>
                 ))}
               </select>
-            </div>
-
-            {/* Source Filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">Source</label>
-              <select
-                value={sourceFilter}
-                onChange={(e) => {
-                  setSourceFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
-              >
-                <option value="">All Sources</option>
-                {SOURCE_CHOICES.map((src) => (
-                  <option key={src.value} value={src.value}>
-                    {src.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Priority Filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">Priority</label>
+            ) : (
               <select
                 value={priorityFilter}
                 onChange={(e) => {
                   setPriorityFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
+                className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
               >
                 <option value="">All Priorities</option>
                 {PRIORITY_CHOICES.map((p) => (
@@ -375,68 +345,96 @@ export const LeadsListPage = () => {
                   </option>
                 ))}
               </select>
-            </div>
-
-            {/* Counsellor Filter (for Manager) */}
-            {isManager && (
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Counsellor</label>
-                <select
-                  value={counsellorFilter}
-                  onChange={(e) => {
-                    setCounsellorFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
-                >
-                  <option value="">All Counsellors</option>
-                  <option value="unassigned">⚠️ Unassigned Leads</option>
-                  {counsellors.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.full_name || c.username}
-                    </option>
-                  ))}
-                </select>
-              </div>
             )}
+          </div>
+        </div>
 
-            {/* Ageing Filter */}
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-600 mb-1">Ageing Tier</label>
+        {/* Quick Filter Pills Row (Stitch) */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-slate-100 text-xs">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Quick Filters:
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setAgeingFilter(ageingFilter === 'FRESH' ? '' : 'FRESH');
+                setCurrentPage(1);
+              }}
+              className={`h-7 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-colors border ${
+                ageingFilter === 'FRESH'
+                  ? 'bg-emerald-100 text-emerald-900 border-emerald-300 font-semibold'
+                  : 'bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200/70'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>Fresh (0-2d)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setAgeingFilter(ageingFilter === 'AGEING' ? '' : 'AGEING');
+                setCurrentPage(1);
+              }}
+              className={`h-7 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-colors border ${
+                ageingFilter === 'AGEING'
+                  ? 'bg-amber-100 text-amber-900 border-amber-300 font-semibold'
+                  : 'bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200/70'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span>Ageing (3-7d)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setAgeingFilter(ageingFilter === 'STALE' ? '' : 'STALE');
+                setCurrentPage(1);
+              }}
+              className={`h-7 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-colors border ${
+                ageingFilter === 'STALE'
+                  ? 'bg-rose-100 text-rose-900 border-rose-300 font-semibold'
+                  : 'bg-slate-100 text-slate-700 border-slate-200/80 hover:bg-slate-200/70'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span>Stale (8+d)</span>
+            </button>
+
+            {/* Sorting selector */}
+            <div className="flex items-center gap-1 ml-2 text-slate-500">
+              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
               <select
-                value={ageingFilter}
+                value={ordering}
                 onChange={(e) => {
-                  setAgeingFilter(e.target.value);
+                  setOrdering(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full py-1.5 px-2 bg-white rounded-lg border border-slate-300 text-xs focus:ring-indigo-500 focus:outline-none"
+                className="bg-transparent text-xs text-slate-600 focus:outline-none cursor-pointer font-medium"
               >
-                <option value="">All Tiers</option>
-                {AGEING_CHOICES.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
+                <option value="-created_at">Newest First</option>
+                <option value="created_at">Oldest First</option>
+                <option value="-updated_at">Recently Updated</option>
+                <option value="first_name">Candidate (A-Z)</option>
               </select>
             </div>
           </div>
-        )}
 
-        {/* Clear Filters bar */}
-        {hasActiveFilters && (
-          <div className="flex items-center justify-between pt-2 text-xs text-slate-500 border-t border-slate-100">
-            <span>Filter results active</span>
+          {hasActiveFilters && (
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 py-1"
             >
               <X className="w-3.5 h-3.5" />
-              Reset all filters
+              <span>Clear All Filters</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </Card>
+
 
       {/* Leads Content */}
       {error && !leads.length ? (
@@ -558,7 +556,7 @@ export const LeadsListPage = () => {
                         </td>
 
                         <td className="py-3 px-4">
-                          <AgeingBadge category={lead.ageing_category} />
+                          <AgeingBadge category={lead.ageing_category} days={lead.age_days} />
                         </td>
 
                         <td className="py-3 px-4">

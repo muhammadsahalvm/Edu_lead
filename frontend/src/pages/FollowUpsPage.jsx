@@ -16,7 +16,6 @@ import {
   Ban,
   Check,
 } from 'lucide-react';
-import { PageHeader } from '../components/common/PageHeader';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { EmptyState } from '../components/common/EmptyState';
@@ -240,38 +239,50 @@ export const FollowUpsPage = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Follow-ups"
-        subtitle="Manage scheduled candidate outreach across calling, WhatsApp, and counselling sessions"
-        breadcrumbs={[
-          { label: 'Dashboard', to: '/dashboard' },
-          { label: 'Follow-ups' },
-        ]}
-        action={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              icon={RefreshCw}
-              isLoading={isLoading}
-              onClick={fetchFollowups}
-            >
-              Refresh
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              icon={Plus}
-              onClick={() => setIsCreateOpen(true)}
-            >
-              + Schedule Follow-up
-            </Button>
+      {/* Stitch Header Row */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+              Follow-ups Management
+            </h1>
+            {counts.overdue > 0 && (
+              <span className="font-mono-data text-xs bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-full font-semibold border border-rose-200">
+                {counts.overdue} SLA Breached
+              </span>
+            )}
           </div>
-        }
-      />
+          <p className="text-xs text-slate-500 mt-1">
+            Candidate Outreach Tasks across Phone, WhatsApp, and Campus Counselling
+          </p>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200 overflow-x-auto gap-1 bg-white px-4 pt-2 rounded-t-xl border border-b-0 border-slate-200 shadow-xs">
+        <div className="flex items-center gap-2.5 self-start lg:self-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            isLoading={isLoading}
+            onClick={fetchFollowups}
+            className="h-9 bg-white"
+          >
+            Refresh
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            icon={Plus}
+            onClick={() => setIsCreateOpen(true)}
+            className="h-9 shadow-xs"
+          >
+            + Schedule Follow-up
+          </Button>
+        </div>
+      </div>
+
+      {/* Stitch Tabs */}
+      <div className="flex border-b border-slate-200 overflow-x-auto gap-1 bg-white px-4 pt-2 rounded-t-xl border border-b-0 border-slate-200/90 shadow-2xs">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -279,10 +290,10 @@ export const FollowUpsPage = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-2.5 text-xs font-semibold border-b-2 -mb-px transition-colors shrink-0 ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold border-b-2 -mb-px transition-colors shrink-0 ${
                 isActive
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
+                  ? 'border-indigo-600 text-indigo-600 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
               }`}
             >
               <Icon
@@ -293,11 +304,11 @@ export const FollowUpsPage = () => {
               <span>{tab.label}</span>
               {typeof tab.count === 'number' && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono-data font-semibold ${
                     tab.danger
-                      ? 'bg-rose-100 text-rose-700'
+                      ? 'bg-rose-100 text-rose-800'
                       : isActive
-                      ? 'bg-indigo-100 text-indigo-700'
+                      ? 'bg-indigo-100 text-indigo-800'
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >

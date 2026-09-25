@@ -163,30 +163,40 @@ export const CounsellorDashboardView = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Welcome Banner */}
-      <div className="p-6 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Stitch Executive Action Header for Counsellor */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-indigo-400 font-semibold text-xs uppercase tracking-wider">
-              Counsellor Workspace
+          <div className="flex items-center gap-2">
+            <span className="inline-flex w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-mono-data text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              Counsellor Queue Active
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-[11px] text-slate-300">Queue Active</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-1">
             {getGreeting()}, {counsellorName}
           </h1>
-          <p className="text-slate-300 text-xs mt-1 max-w-xl leading-relaxed">
-            Here's what needs your attention today. Address overdue follow-ups, attend scheduled calls, and nurture active enquiries.
+          <p className="text-xs sm:text-sm text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
+            <span>Assigned Candidate Enquiries</span>
+            <span className="text-slate-300 font-mono-data">•</span>
+            <span>Focus: High-Intent Outreach</span>
+            {overdueFollowupsCount > 0 && (
+              <>
+                <span className="text-slate-300 font-mono-data">•</span>
+                <span className="inline-flex items-center gap-1 font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full text-xs">
+                  <AlertTriangle className="w-3 h-3" />
+                  {overdueFollowupsCount} overdue follow-up tasks
+                </span>
+              </>
+            )}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigate('/leads/new')}
-            className="bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30"
+            className="h-9 bg-white"
           >
             + Add Lead
           </Button>
@@ -194,7 +204,7 @@ export const CounsellorDashboardView = ({
             variant="primary"
             size="sm"
             onClick={() => navigate('/followups')}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white"
+            className="h-9 shadow-xs"
           >
             Follow-up Queue ({pendingFollowupsCount})
           </Button>
