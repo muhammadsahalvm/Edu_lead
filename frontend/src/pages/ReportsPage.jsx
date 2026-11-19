@@ -321,7 +321,7 @@ export const ReportsPage = () => {
                     <tbody className="divide-y divide-slate-100">
                       {courses.map((c) => (
                         <tr key={c.course_id || c.course_code} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-2 px-4 font-mono font-semibold text-indigo-600">
+                          <td className="py-2 px-4 font-mono font-semibold text-blue-600">
                             {c.course_code}
                           </td>
                           <td className="py-2 px-4 text-slate-800 font-medium truncate max-w-[140px]" title={c.course_name}>

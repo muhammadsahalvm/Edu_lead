@@ -6,13 +6,11 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Cell,
+  CartesianGrid,
 } from 'recharts';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { GraduationCap } from 'lucide-react';
-
-const COURSE_COLORS = ['#3b82f6', '#6366f1', '#8b5cf6', '#ec4899', '#14b8a6'];
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -21,7 +19,7 @@ const CustomTooltip = ({ active, payload }) => {
       <div className="bg-slate-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg border border-slate-700">
         <p className="font-semibold text-slate-100">{data.course_name}</p>
         <p className="text-slate-300 mt-0.5">
-          Code: <span className="font-mono text-indigo-300">{data.course_code}</span>
+          Code: <span className="font-mono text-blue-300">{data.course_code}</span>
         </p>
         <p className="text-slate-300">
           Enquiries: <span className="font-bold text-white">{data.count}</span> ({data.percentage}%)
@@ -39,6 +37,7 @@ export const LeadCourseChart = ({ courses = [], isLoading }) => {
     <Card
       title="Academic Program Demand"
       subtitle="Lead volume distribution and interest grouped by degree course"
+      className="h-full"
     >
       {isLoading ? (
         <div className="h-64 flex items-center justify-center">
@@ -52,27 +51,30 @@ export const LeadCourseChart = ({ courses = [], isLoading }) => {
         />
       ) : (
         <div>
-          <div className="h-64 w-full">
+          <div className="h-64 w-full rounded-lg bg-slate-50/70 px-2 py-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={courses}
-                margin={{ top: 10, right: 10, left: -15, bottom: 20 }}
+                margin={{ top: 12, right: 12, left: -12, bottom: 16 }}
               >
+                <defs>
+                  <linearGradient id="leadCourseBlue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563eb" />
+                    <stop offset="100%" stopColor="#bfdbfe" stopOpacity="0.45" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="#e6ebf2" strokeDasharray="3 5" />
                 <XAxis
                   dataKey="course_code"
-                  tick={{ fontSize: 11, fill: '#475569' }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  tick={{ fontSize: 10, fill: '#64748b' }}
                   interval={0}
                 />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#64748b' }} />
+                <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                  {courses.map((entry, index) => (
-                    <Cell
-                      key={`course-cell-${index}`}
-                      fill={COURSE_COLORS[index % COURSE_COLORS.length]}
-                    />
-                  ))}
-                </Bar>
+                <Bar dataKey="count" barSize={30} radius={[8, 8, 0, 0]} fill="url(#leadCourseBlue)" />
               </BarChart>
             </ResponsiveContainer>
           </div>

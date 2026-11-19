@@ -15,6 +15,7 @@ export const DashboardPage = () => {
   const [overdueFollowups, setOverdueFollowups] = useState([]);
   const [todaysFollowups, setTodaysFollowups] = useState([]);
   const [recentLeads, setRecentLeads] = useState([]);
+  const [completedTaskTrend, setCompletedTaskTrend] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,12 +25,16 @@ export const DashboardPage = () => {
 
     try {
       // Parallel execution of operational queries
-      const [dashRes, overdueRes, followupsRes, recentLeadsRes] = await Promise.allSettled([
+      const dashboardRequests = [
         apiClient.get(API_ENDPOINTS.ANALYTICS.DASHBOARD),
         apiClient.get(API_ENDPOINTS.FOLLOWUPS.OVERDUE),
         apiClient.get(`${API_ENDPOINTS.FOLLOWUPS.LIST}?status=PENDING`),
         apiClient.get(`${API_ENDPOINTS.LEADS.LIST}?ordering=-updated_at`),
-      ]);
+      ];
+      if (!isManager) {
+        dashboardRequests.push(apiClient.get(API_ENDPOINTS.FOLLOWUPS.COMPLETED_SUMMARY));
+      }
+      const [dashRes, overdueRes, followupsRes, recentLeadsRes, completedTrendRes] = await Promise.allSettled(dashboardRequests);
 
       if (dashRes.status === 'fulfilled') {
         setDashboardData(dashRes.value.data);
@@ -57,6 +62,12 @@ export const DashboardPage = () => {
         const rawLeads = recentLeadsRes.value.data;
         setRecentLeads(rawLeads?.results || rawLeads || []);
       }
+
+      if (!isManager && completedTrendRes?.status === 'fulfilled') {
+        setCompletedTaskTrend(completedTrendRes.value.data?.results || []);
+      } else {
+        setCompletedTaskTrend([]);
+      }
     } catch (err) {
       const formatted = formatApiError(err);
       setError(formatted);
@@ -64,7 +75,7 @@ export const DashboardPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, isManager]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -86,7 +97,6 @@ export const DashboardPage = () => {
     <ManagerDashboardView
       dashboardData={dashboardData}
       todaysFollowups={todaysFollowups}
-      overdueFollowups={overdueFollowups}
       isLoading={isLoading}
       onRefresh={fetchDashboardData}
     />
@@ -97,6 +107,7 @@ export const DashboardPage = () => {
       overdueFollowups={overdueFollowups}
       todaysFollowups={todaysFollowups}
       recentLeads={recentLeads}
+      completedTaskTrend={completedTaskTrend}
       isLoading={isLoading}
       onRefresh={fetchDashboardData}
     />

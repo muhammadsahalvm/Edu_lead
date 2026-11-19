@@ -28,7 +28,7 @@ export const TodayFollowupsWidget = ({ followups = [], isLoading }) => {
       action={
         <Link
           to="/followups"
-          className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+          className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
         >
           <span>View All Tasks</span>
           <ExternalLink className="w-3 h-3" />
@@ -71,7 +71,7 @@ export const TodayFollowupsWidget = ({ followups = [], isLoading }) => {
                   <td className="py-2.5 px-4">
                     <Link
                       to={`/leads/${item.lead}`}
-                      className="font-semibold text-slate-900 hover:text-indigo-600 flex items-center gap-1.5"
+                      className="font-semibold text-slate-900 hover:text-blue-600 flex items-center gap-1.5"
                     >
                       <span>{item.lead_name || `Lead #${item.lead}`}</span>
                       <ExternalLink className="w-3 h-3 text-slate-400" />

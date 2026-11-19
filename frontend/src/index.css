@@ -4,9 +4,9 @@
   :root {
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --color-brand-primary: #4f46e5;
-    --color-brand-primary-hover: #4338ca;
-    --color-brand-surface: #f8fafc;
+    --color-brand-primary: #2563eb;
+    --color-brand-primary-hover: #1d4ed8;
+    --color-brand-surface: #f1f3f6;
     --color-brand-surface-card: #ffffff;
     --color-brand-border: #e2e8f0;
     --color-brand-border-subtle: #cbd5e1;
@@ -23,7 +23,7 @@
 
   /* Accessible focus rings */
   :focus-visible {
-    outline: 2px solid #4f46e5;
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
   }
 }
@@ -72,9 +72,9 @@
 /* Stitch Enterprise Card Elevation */
 .stitch-card {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+  border: 1px solid #e7e9ee;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.035), 0 1px 2px -1px rgba(15, 23, 42, 0.025);
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -97,4 +97,66 @@
 
 .stitch-table tr:hover {
   background-color: #f8fafc;
+}
+
+.login-page {
+  background: #f0f2fb;
+}
+
+.login-card {
+  min-height: 590px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 60px rgba(37, 73, 150, 0.18), 0 4px 16px rgba(15, 23, 42, 0.07);
+}
+
+.login-visual {
+  background: linear-gradient(145deg, #45c8ee 0%, #347bf2 38%, #4246dc 70%, #a3b5ff 100%);
+}
+
+.login-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(42px);
+  pointer-events: none;
+}
+
+.login-orb-one {
+  width: 250px;
+  height: 250px;
+  top: 18%;
+  left: 28%;
+  background: rgba(35, 56, 211, 0.75);
+}
+
+.login-orb-two {
+  width: 240px;
+  height: 240px;
+  right: -15%;
+  bottom: -7%;
+  background: rgba(134, 216, 255, 0.7);
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.13);
+}
+
+.login-submit {
+  background: #2563eb !important;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.login-submit:hover {
+  background: #1d4ed8 !important;
+}
+
+.role-choice:hover {
+  border-color: #93c5fd;
+  background: #f8fbff;
+}
+
+@media (max-width: 639px) {
+  .login-card { min-height: 0; }
+  .login-visual { min-height: 240px; }
 }

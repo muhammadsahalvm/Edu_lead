@@ -58,15 +58,15 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
 
       {/* Sidebar container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white text-slate-700 border-r border-slate-200/90 flex flex-col justify-between transition-transform duration-200 ease-in-out md:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white text-slate-700 border-r border-slate-200/90 flex flex-col justify-between transition-transform duration-200 ease-in-out md:static md:z-auto md:h-full md:min-h-0 md:w-60 md:shrink-0 md:translate-x-0 md:rounded-none md:border-0 md:border-r md:border-slate-200 md:shadow-none md:overflow-hidden ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col flex-1 overflow-y-auto">
           {/* Brand & Institution Badge */}
-          <div className="p-4 border-b border-slate-200/80 flex flex-col gap-2.5">
+          <div className="p-4 border-b border-slate-100 flex flex-col gap-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-xs">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
                 <GraduationCap className="w-5 h-5" />
               </div>
               <div className="flex flex-col">
@@ -82,7 +82,7 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
             {/* Institution Context Pill */}
             <div className="mt-0.5 bg-slate-100/80 px-2.5 py-1 rounded-md border border-slate-200/60 flex items-center justify-between">
               <div className="flex items-center gap-1.5 overflow-hidden">
-                <Building2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span className="text-[11px] text-slate-800 font-medium truncate">
                   EduLead Institute
                 </span>
@@ -94,19 +94,19 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+          <nav className="flex-1 px-3 py-5 flex flex-col gap-1.5">
             <span className="px-2.5 pb-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              Operations
+              Main Menu
             </span>
 
             <NavLink
               to="/dashboard"
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                `flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    ? 'bg-slate-950 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                 }`
               }
             >
@@ -118,12 +118,13 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
 
             <NavLink
               to="/leads"
+              end
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                `flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    ? 'bg-slate-950 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                 }`
               }
             >
@@ -140,10 +141,10 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
               to="/followups"
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                `flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    ? 'bg-slate-950 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                 }`
               }
             >
@@ -160,10 +161,10 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
               to="/leads/new"
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                `flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    ? 'bg-slate-950 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                 }`
               }
             >
@@ -175,7 +176,7 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
 
             {/* Analytics & System Section */}
             <span className="px-2.5 pt-4 pb-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              Analytics & System
+              Features
             </span>
 
             {isManager && (
@@ -183,10 +184,10 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
                 to="/reports"
                 onClick={onCloseMobile}
                 className={({ isActive }) =>
-                  `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                  `flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                      ? 'bg-slate-950 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                   }`
                 }
               >
@@ -237,10 +238,10 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
         </div>
 
         {/* Bottom Profile Bar */}
-        <div className="p-3 border-t border-slate-200/80 bg-slate-50/50 flex flex-col gap-2">
-          <div className="p-2 rounded-lg bg-white border border-slate-200/80 flex items-center justify-between shadow-2xs">
+        <div className="mt-3 p-3 border-t border-slate-100 bg-white flex flex-col gap-2">
+          <div className="p-2 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between">
             <div className="flex items-center gap-2 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center justify-center font-bold text-xs shrink-0">
+              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center font-bold text-xs shrink-0">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <div className="flex flex-col truncate">
@@ -257,18 +258,19 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
             )}
           </div>
 
-          <div className="flex items-center justify-between px-1">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600 hover:text-rose-600 py-1 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
-            </button>
-            <span className="font-mono-data text-[10px] text-slate-400">
-              v1.0.0
-            </span>
+          <div className="flex flex-col gap-1 px-1 pt-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">General</span>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600 hover:text-rose-600 py-1 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+              <span className="font-mono-data text-[10px] text-slate-400">v1.0.0</span>
+            </div>
           </div>
         </div>
       </aside>

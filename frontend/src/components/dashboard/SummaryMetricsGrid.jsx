@@ -4,16 +4,14 @@ import {
   UserCheck,
   Calendar,
   AlertTriangle,
-  Award,
-  TrendingUp,
 } from 'lucide-react';
 import { MetricCard } from '../common/MetricCard';
 
 export const SummaryMetricsGrid = ({ summary, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
-        {Array.from({ length: 6 }).map((_, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
+        {Array.from({ length: 4 }).map((_, i) => (
           <MetricCard key={i} isLoading />
         ))}
       </div>
@@ -25,9 +23,6 @@ export const SummaryMetricsGrid = ({ summary, isLoading }) => {
   const total = summary?.total_leads ?? 0;
   const newLeads = summary?.new_leads ?? 0;
   const today = summary?.today_followups ?? summary?.todays_followups ?? 0;
-  const converted = summary?.converted_leads ?? 0;
-  const rate = summary?.conversion_rate ?? 0;
-
   const metrics = [
     {
       id: 'total_leads',
@@ -63,27 +58,10 @@ export const SummaryMetricsGrid = ({ summary, isLoading }) => {
       subtitle: overdue > 0 ? 'Requires immediate triage' : 'SLA compliant',
       alert: overdue > 0,
     },
-    {
-      id: 'converted_leads',
-      label: 'Enrolled / Converted',
-      value: converted,
-      icon: Award,
-      variant: 'purple',
-      subtitle: 'Confirmed admissions',
-    },
-    {
-      id: 'conversion_rate',
-      label: 'Net Yield Rate',
-      value: `${rate}%`,
-      icon: TrendingUp,
-      variant: 'success',
-      subtitle: `${rate}% Conversion yield`,
-      tooltip: summary?.calculation_definition || 'Formula: (converted_leads / total_leads) * 100',
-    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-6">
       {metrics.map((m) => (
         <MetricCard
           key={m.id}

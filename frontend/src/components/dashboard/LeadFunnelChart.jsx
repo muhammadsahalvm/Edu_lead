@@ -6,21 +6,11 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Cell,
+  CartesianGrid,
 } from 'recharts';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { Filter, ArrowRight } from 'lucide-react';
-
-const STAGE_COLORS = [
-  '#6366f1', // NEW (Indigo)
-  '#0ea5e9', // CONTACTED (Sky)
-  '#3b82f6', // INTERESTED (Blue)
-  '#8b5cf6', // COUNSELLING_SCHEDULED (Purple)
-  '#f59e0b', // APPLICATION_STARTED (Amber)
-  '#10b981', // APPLICATION_SUBMITTED (Emerald)
-  '#059669', // CONVERTED (Deep Emerald)
-];
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -45,7 +35,7 @@ export const LeadFunnelChart = ({ funnel = [], isLoading }) => {
       title="Lead Conversion Funnel"
       subtitle="Progression from initial enquiry to enrolled student"
       action={
-        <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200/70">
+        <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/70">
           {totalInFunnel} Leads in Funnel
         </span>
       }
@@ -62,29 +52,32 @@ export const LeadFunnelChart = ({ funnel = [], isLoading }) => {
         />
       ) : (
         <div>
-          <div className="h-64 w-full">
+          <div className="h-64 w-full rounded-lg bg-slate-50/70 px-2 py-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={funnel}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                margin={{ top: 8, right: 18, left: 8, bottom: 4 }}
               >
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#64748b' }} />
+                <defs>
+                  <linearGradient id="leadFunnelBlue" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#2563eb" />
+                    <stop offset="100%" stopColor="#7db7ff" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid horizontal={false} stroke="#e6ebf2" strokeDasharray="3 5" />
+                <XAxis type="number" allowDecimals={false} axisLine={false} tickLine={false} tickMargin={8} tick={{ fontSize: 11, fill: '#94a3b8' }} />
                 <YAxis
                   dataKey="stage_display"
                   type="category"
-                  tick={{ fontSize: 11, fill: '#334155', fontWeight: 500 }}
-                  width={145}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                  tick={{ fontSize: 11, fill: '#475569', fontWeight: 500 }}
+                  width={138}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                  {funnel.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={STAGE_COLORS[index % STAGE_COLORS.length]}
-                    />
-                  ))}
-                </Bar>
+                <Bar dataKey="count" barSize={19} radius={[0, 8, 8, 0]} fill="url(#leadFunnelBlue)" />
               </BarChart>
             </ResponsiveContainer>
           </div>

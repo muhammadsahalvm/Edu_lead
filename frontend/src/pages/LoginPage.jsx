@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GraduationCap, Lock, User, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { GraduationCap, Lock, User, AlertCircle, ShieldCheck, Sparkles, UsersRound, BriefcaseBusiness } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/common/Button';
-import { Input } from '../components/common/Input';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
   const toast = useToast();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // If already authenticated, redirect
   const from = location.state?.from?.pathname || '/dashboard';
+
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
-    }
+    if (isAuthenticated) navigate(from, { replace: true });
   }, [isAuthenticated, navigate, from]);
+
+  const fillQuickCredentials = (role) => {
+    setUsername(role === 'manager' ? 'manager_priya' : 'counsellor_amit');
+    setPassword('Password@123');
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,14 +33,10 @@ export const LoginPage = () => {
       setError('Please provide both username and password.');
       return;
     }
-
     setError('');
     setIsSubmitting(true);
-
     const result = await login(username.trim(), password);
-
     setIsSubmitting(false);
-
     if (result.success) {
       toast.success(`Welcome back, ${result.user.first_name || result.user.username}!`);
       navigate(from, { replace: true });
@@ -48,139 +45,56 @@ export const LoginPage = () => {
     }
   };
 
-  const fillQuickCredentials = (userType) => {
-    if (userType === 'manager') {
-      setUsername('manager_priya');
-      setPassword('Password@123');
-    } else {
-      setUsername('counsellor_amit');
-      setPassword('Password@123');
-    }
-    setError('');
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Subtle institutional grid / ambient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none opacity-60" />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm ring-1 ring-indigo-700/20">
-            <GraduationCap className="w-5 h-5" />
+    <main className="login-page min-h-screen flex items-center justify-center p-4 sm:p-8">
+      <section className="login-card grid w-full max-w-5xl overflow-hidden rounded-[28px] bg-white sm:grid-cols-2">
+        <div className="login-visual relative flex min-h-[280px] flex-col justify-between overflow-hidden p-8 sm:min-h-[590px] sm:p-10">
+          <div className="login-orb login-orb-one" />
+          <div className="login-orb login-orb-two" />
+          <div className="relative z-10 flex items-center gap-3 text-white">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/35 backdrop-blur-sm"><GraduationCap className="h-6 w-6" /></div>
+            <div><span className="block text-lg font-bold tracking-tight">EduLead</span><span className="text-[10px] font-semibold uppercase tracking-[.18em] text-white/75">Admissions CRM</span></div>
           </div>
-          <div>
-            <span className="text-xl font-bold tracking-tight text-slate-900 block leading-tight">EduLead</span>
-            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Operational Console</span>
+          <div className="relative z-10 max-w-sm text-white">
+            <Sparkles className="mb-5 h-7 w-7 text-white/90" />
+            <p className="mb-2 text-sm font-medium text-white/80">A clearer way to connect</p>
+            <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-[2.5rem]">Every student journey, all in one place.</h1>
+            <p className="mt-4 max-w-xs text-sm leading-6 text-white/75">Manage enquiries, meaningful conversations, and admissions progress with confidence.</p>
           </div>
+          <div className="relative z-10 text-xs font-medium text-white/70">Your admissions workspace</div>
         </div>
-        <h2 className="mt-5 text-center text-lg font-bold text-slate-900 tracking-tight">
-          Admissions Management Portal
-        </h2>
-        <p className="mt-1 text-center text-xs text-slate-500 max-w-xs mx-auto">
-          Secure CRM for Higher Education Enquiries, Counseling Workflows & Conversions
-        </p>
-      </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="stitch-card p-6 sm:p-8 bg-white border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-          {error && (
-            <div
-              role="alert"
-              className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5 font-medium"
-            >
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
-              <div className="flex-1">{error}</div>
+        <div className="flex items-center justify-center p-7 sm:p-10 lg:p-14">
+          <div className="w-full max-w-md">
+            <div className="mb-8">
+              <span className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700"><ShieldCheck className="h-5 w-5" /></span>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-950">Welcome back</h2>
+              <p className="mt-1.5 text-sm text-slate-500">Sign in to continue to your EduLead workspace.</p>
             </div>
-          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Staff Identifier / Username
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <User className="w-4 h-4" />
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  autoComplete="username"
-                  placeholder="e.g. manager_priya or counsellor_amit"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-xs"
-                />
+            {error && <div role="alert" className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-medium text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="username" className="mb-2 block text-sm font-semibold text-slate-700">Username</label>
+                <div className="relative"><User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input id="username" name="username" type="text" required autoComplete="username" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} className="login-input w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400" /></div>
               </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Security Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Lock className="w-4 h-4" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-xs"
-                />
+              <div>
+                <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+                <div className="relative"><Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input id="password" name="password" type="password" required autoComplete="current-password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} className="login-input w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400" /></div>
               </div>
-            </div>
+              <Button type="submit" variant="primary" size="md" isLoading={isSubmitting} className="login-submit w-full rounded-xl py-3 text-sm font-semibold">Sign in to EduLead</Button>
+            </form>
 
-            <div className="pt-2">
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-                isLoading={isSubmitting}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-xs"
-              >
-                Sign In to Console
-              </Button>
+            <div className="my-6 flex items-center gap-3 text-[11px] font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />Choose a workspace<span className="h-px flex-1 bg-slate-200" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <button type="button" onClick={() => fillQuickCredentials('manager')} className="role-choice group flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 group-hover:bg-blue-100"><BriefcaseBusiness className="h-5 w-5" /></span><span><span className="block text-sm font-semibold text-slate-800">Manager</span><span className="block text-[11px] text-slate-500">Team overview</span></span></button>
+              <button type="button" onClick={() => fillQuickCredentials('counsellor')} className="role-choice group flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 group-hover:bg-blue-100"><UsersRound className="h-5 w-5" /></span><span><span className="block text-sm font-semibold text-slate-800">Counsellor</span><span className="block text-[11px] text-slate-500">My enquiries</span></span></button>
             </div>
-          </form>
-
-          {/* Assessment quick-login helper */}
-          <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2.5">
-              Quick Fill Assessment Accounts
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => fillQuickCredentials('manager')}
-                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-md border border-slate-200 transition-colors hover:border-slate-300"
-              >
-                Manager Demo
-              </button>
-              <button
-                type="button"
-                onClick={() => fillQuickCredentials('counsellor')}
-                className="flex-1 py-1.5 px-3 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-md border border-slate-200 transition-colors hover:border-slate-300"
-              >
-                Counsellor Demo
-              </button>
-            </div>
+            <p className="mt-7 text-center text-xs text-slate-400">Secure access for your admissions team</p>
           </div>
         </div>
-
-        <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-500">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Institutional JWT with Refresh Token Rotation</span>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };

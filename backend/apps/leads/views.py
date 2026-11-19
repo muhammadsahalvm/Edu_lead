@@ -3,7 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from .models import (
     Lead,
@@ -53,7 +54,13 @@ class LeadViewSet(viewsets.ModelViewSet):
 
         # Row-level authorization scoping
         if not user.is_manager:
-            queryset = queryset.filter(counsellor=user)
+            # A counsellor assigned to a follow-up must be able to open its
+            # lead from the Needs Attention queue, even when another
+            # counsellor owns the lead. Object permissions keep this access
+            # read-only for non-owners.
+            queryset = queryset.filter(
+                Q(counsellor=user) | Q(follow_ups__assigned_to=user)
+            ).distinct()
 
         # Apply searching, filtering, and ordering
         return LeadFilterHelper.filter_queryset(queryset, self.request.query_params, user)
@@ -284,6 +291,39 @@ class FollowUpViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=FollowUpStatus.PENDING, scheduled_at__gte=now)
 
         return queryset.order_by('scheduled_at')
+
+    @action(detail=False, methods=['get'], url_path='completed-summary')
+    def completed_summary(self, request):
+        """Return completed follow-up counts by day for the last seven days."""
+        from datetime import timedelta
+
+        end_date = timezone.localdate()
+        start_date = end_date - timedelta(days=6)
+        daily_counts = (
+            self.get_queryset()
+            .filter(
+                status=FollowUpStatus.COMPLETED,
+                completed_at__date__gte=start_date,
+                completed_at__date__lte=end_date,
+            )
+            .annotate(completed_date=TruncDate('completed_at'))
+            .values('completed_date')
+            .annotate(count=Count('id'))
+            .order_by('completed_date')
+        )
+        counts_by_date = {row['completed_date']: row['count'] for row in daily_counts}
+        results = [
+            {
+                'date': (start_date + timedelta(days=offset)).isoformat(),
+                'count': counts_by_date.get(start_date + timedelta(days=offset), 0),
+            }
+            for offset in range(7)
+        ]
+        return Response({
+            'period': 'last_7_days',
+            'total': sum(item['count'] for item in results),
+            'results': results,
+        })
 
     def perform_create(self, serializer):
         user = self.request.user

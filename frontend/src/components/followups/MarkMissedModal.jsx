@@ -70,7 +70,7 @@ export const MarkMissedModal = ({ followup, isOpen, onClose, onUpdated }) => {
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <X className="w-4 h-4" />
           </button>
@@ -94,7 +94,7 @@ export const MarkMissedModal = ({ followup, isOpen, onClose, onUpdated }) => {
             </label>
             <textarea
               rows={3}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g. Candidate phone was unreachable, candidate requested reschedule later..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

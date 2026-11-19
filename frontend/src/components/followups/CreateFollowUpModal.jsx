@@ -133,7 +133,7 @@ export const CreateFollowUpModal = ({ isOpen, onClose, onCreated }) => {
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <X className="w-4 h-4" />
           </button>
@@ -175,7 +175,7 @@ export const CreateFollowUpModal = ({ isOpen, onClose, onCreated }) => {
               required
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -185,7 +185,7 @@ export const CreateFollowUpModal = ({ isOpen, onClose, onCreated }) => {
             </label>
             <textarea
               rows={3}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g. Discuss entrance test scores, fee waiver eligibility, hostel facilities..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

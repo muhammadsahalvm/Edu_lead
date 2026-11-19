@@ -5,20 +5,19 @@ import {
   Pie,
   Cell,
   Tooltip,
-  Legend,
 } from 'recharts';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { Compass } from 'lucide-react';
 
 const SOURCE_COLORS = [
-  '#4f46e5', // Indigo
-  '#06b6d4', // Cyan
-  '#10b981', // Emerald
-  '#f59e0b', // Amber
-  '#ec4899', // Pink
-  '#8b5cf6', // Purple
-  '#64748b', // Slate
+  '#2563eb',
+  '#0ea5e9',
+  '#38bdf8',
+  '#1d4ed8',
+  '#60a5fa',
+  '#0284c7',
+  '#93c5fd',
 ];
 
 const CustomTooltip = ({ active, payload }) => {
@@ -43,6 +42,7 @@ export const LeadSourceChart = ({ sources = [], isLoading }) => {
     <Card
       title="Leads by Acquisition Source"
       subtitle="Volume and attribution percentage per outreach channel"
+      className="h-full"
     >
       {isLoading ? (
         <div className="h-64 flex items-center justify-center">
@@ -68,6 +68,8 @@ export const LeadSourceChart = ({ sources = [], isLoading }) => {
                   innerRadius={45}
                   outerRadius={75}
                   paddingAngle={2}
+                  stroke="#ffffff"
+                  strokeWidth={3}
                 >
                   {sources.map((entry, index) => (
                     <Cell

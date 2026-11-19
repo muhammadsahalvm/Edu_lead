@@ -5,8 +5,8 @@ import {
   Calendar,
   AlertTriangle,
   Clock,
+  UserPlus,
   CheckCircle2,
-  TrendingUp,
   Plus,
   Phone,
   MessageSquare,
@@ -14,7 +14,6 @@ import {
   ChevronRight,
   Sparkles,
   ArrowUpRight,
-  Flame,
 } from 'lucide-react';
 import { MetricCard } from '../common/MetricCard';
 import { Card } from '../common/Card';
@@ -23,6 +22,7 @@ import { StatusBadge, AgeingBadge, PriorityBadge } from '../common/Badge';
 import { EmptyState } from '../common/EmptyState';
 import { StatusUpdateModal } from '../leads/StatusUpdateModal';
 import { ScheduleFollowUpModal } from '../leads/ScheduleFollowUpModal';
+import { TaskCompletionChart } from './TaskCompletionChart';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -31,12 +31,20 @@ const getGreeting = () => {
   return 'Good evening';
 };
 
+const getAttentionIcon = (item) => {
+  if (item.priorityType === 'danger') return AlertTriangle;
+  if (item.priorityReason === 'Due Today') return Calendar;
+  if (item.priorityType === 'warning') return Clock;
+  return UserPlus;
+};
+
 export const CounsellorDashboardView = ({
   user,
   dashboardData,
   overdueFollowups = [],
   todaysFollowups = [],
   recentLeads = [],
+  completedTaskTrend = [],
   isLoading,
   onRefresh,
 }) => {
@@ -48,19 +56,21 @@ export const CounsellorDashboardView = ({
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   const summary = dashboardData?.summary || {};
-  const funnel = dashboardData?.funnel || [];
+
+  // Follow-up payloads provide the lead FK as `lead`; resolve it against the
+  // lead list when possible so dashboard actions always use the canonical PK.
+  const getAttentionLeadId = (item) => {
+    const matchingLead = recentLeads.find(
+      (lead) => lead.id === item.leadId || lead.lead_number === item.leadNumber
+    );
+    return matchingLead?.id ?? item.leadRaw?.id ?? item.leadId;
+  };
 
   // Real KPI calculations from backend data
   const myLeadsCount = summary.total_leads ?? 0;
   const todayFollowupsCount = summary.today_followups ?? summary.todays_followups ?? todaysFollowups.length;
   const overdueFollowupsCount = summary.overdue_followups ?? overdueFollowups.length;
   const pendingFollowupsCount = todayFollowupsCount + overdueFollowupsCount;
-
-  const interestedLeadsCount =
-    funnel.find((f) => f.stage === 'INTERESTED')?.count ?? 0;
-  const applicationsInProgressCount =
-    (funnel.find((f) => f.stage === 'APPLICATION_STARTED')?.count ?? 0) +
-    (funnel.find((f) => f.stage === 'APPLICATION_SUBMITTED')?.count ?? 0);
 
   // Build the "Needs Attention" prioritized items
   // 1. Overdue follow-ups
@@ -164,39 +174,18 @@ export const CounsellorDashboardView = ({
   return (
     <div className="space-y-6">
       {/* Stitch Executive Action Header for Counsellor */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-mono-data text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Counsellor Queue Active
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mt-1">
-            {getGreeting()}, {counsellorName}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
-            <span>Assigned Candidate Enquiries</span>
-            <span className="text-slate-300 font-mono-data">•</span>
-            <span>Focus: High-Intent Outreach</span>
-            {overdueFollowupsCount > 0 && (
-              <>
-                <span className="text-slate-300 font-mono-data">•</span>
-                <span className="inline-flex items-center gap-1 font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full text-xs">
-                  <AlertTriangle className="w-3 h-3" />
-                  {overdueFollowupsCount} overdue follow-up tasks
-                </span>
-              </>
-            )}
-          </p>
+      <div className="flex flex-col gap-5 border-b border-slate-200/80 pb-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-[28px]">Overview</h1>
+          <p className="mt-1 text-sm text-slate-500">{getGreeting()}, {counsellorName}. Here is your enquiry summary for today.</p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0 self-start xl:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigate('/leads/new')}
-            className="h-9 bg-white"
+            className="h-10 rounded-xl bg-white"
           >
             + Add Lead
           </Button>
@@ -204,41 +193,15 @@ export const CounsellorDashboardView = ({
             variant="primary"
             size="sm"
             onClick={() => navigate('/followups')}
-            className="h-9 shadow-xs"
+            className="h-10 rounded-xl shadow-xs"
           >
             Follow-up Queue ({pendingFollowupsCount})
           </Button>
         </div>
       </div>
 
-      {/* Overdue Alert Banner if SLA breached */}
-      {overdueFollowupsCount > 0 && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-700 shrink-0">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="font-bold text-sm text-rose-950">
-                {overdueFollowupsCount} Follow-up {overdueFollowupsCount === 1 ? 'Task is' : 'Tasks are'} Overdue
-              </p>
-              <p className="text-rose-700 mt-0.5">
-                These student enquiries have passed their scheduled contact time and require immediate outreach.
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => navigate('/followups')}
-          >
-            Resolve Overdue
-          </Button>
-        </div>
-      )}
-
-      {/* Counsellor 6-KPI Section */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* Counsellor priority KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         <MetricCard
           label="My Leads"
           value={myLeadsCount}
@@ -272,22 +235,6 @@ export const CounsellorDashboardView = ({
           variant="default"
           isLoading={isLoading}
         />
-        <MetricCard
-          label="Interested Leads"
-          value={interestedLeadsCount}
-          subtitle="Qualified prospects"
-          icon={Flame}
-          variant="purple"
-          isLoading={isLoading}
-        />
-        <MetricCard
-          label="Applications in Progress"
-          value={applicationsInProgressCount}
-          subtitle="Started & Submitted"
-          icon={TrendingUp}
-          variant="info"
-          isLoading={isLoading}
-        />
       </div>
 
       {/* Main Execution Grid */}
@@ -297,6 +244,7 @@ export const CounsellorDashboardView = ({
           <Card
             title="Needs Attention"
             subtitle="Prioritized candidate action queue: overdue tasks, today's calls, and new enquiries"
+            headerClassName="px-6 py-5"
             action={
               <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
                 {attentionItems.length} Actionable Items
@@ -324,22 +272,25 @@ export const CounsellorDashboardView = ({
                 {attentionItems.slice(0, 7).map((item) => (
                   <div
                     key={item.id}
-                    className="p-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-5 sm:p-5 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
                         <Link
-                          to={`/leads/${item.leadId}`}
-                          className="font-bold text-xs text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                          to={`/leads/${getAttentionLeadId(item)}`}
+                          className="font-semibold text-sm text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1"
                         >
                           <span>{item.leadName}</span>
                           <ExternalLink className="w-3 h-3 text-slate-400" />
                         </Link>
-                        <span className="text-[10px] font-mono text-slate-400">
+                        <span className="text-[11px] font-mono text-slate-400">
                           {item.leadNumber}
                         </span>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          role="img"
+                          aria-label={item.priorityReason}
+                          title={item.priorityReason}
+                          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${
                             item.priorityType === 'danger'
                               ? 'bg-rose-50 text-rose-700 border-rose-200'
                               : item.priorityType === 'warning'
@@ -347,11 +298,11 @@ export const CounsellorDashboardView = ({
                               : 'bg-sky-50 text-sky-700 border-sky-200'
                           }`}
                         >
-                          {item.priorityReason}
+                          {React.createElement(getAttentionIcon(item), { className: 'h-3.5 w-3.5' })}
                         </span>
                       </div>
 
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-xs leading-5 text-slate-500">
                         Course: <strong className="text-slate-700">{item.courseName}</strong>
                         {item.scheduledAt && (
                           <span>
@@ -367,18 +318,18 @@ export const CounsellorDashboardView = ({
                       </p>
 
                       {item.notes && (
-                        <p className="text-[11px] text-slate-400 italic mt-0.5 line-clamp-1">
+                        <p className="text-xs leading-5 text-slate-400 italic line-clamp-2">
                           "{item.notes}"
                         </p>
                       )}
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex flex-wrap items-center justify-start gap-2 shrink-0 sm:justify-end">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate(`/leads/${item.leadId}`)}
+                        onClick={() => navigate(`/leads/${getAttentionLeadId(item)}`)}
                       >
                         View
                       </Button>
@@ -407,7 +358,7 @@ export const CounsellorDashboardView = ({
         </div>
 
         {/* Right Column (5 cols): Today's Schedule Agenda & Recent Enquiries */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="flex flex-col gap-6 lg:col-span-5">
           {/* Today's Agenda */}
           <Card
             title="Today's Outreach Agenda"
@@ -415,7 +366,7 @@ export const CounsellorDashboardView = ({
             action={
               <Link
                 to="/followups"
-                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
               >
                 <span>Full Queue</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -448,7 +399,7 @@ export const CounsellorDashboardView = ({
                     <div className="min-w-0">
                       <Link
                         to={`/leads/${item.lead}`}
-                        className="font-semibold text-xs text-slate-900 hover:text-indigo-600 truncate block"
+                        className="font-semibold text-xs text-slate-900 hover:text-blue-600 truncate block"
                       >
                         {item.lead_name || `Lead #${item.lead}`}
                       </Link>
@@ -487,6 +438,8 @@ export const CounsellorDashboardView = ({
               </Button>
             </Link>
           </div>
+
+          <TaskCompletionChart data={completedTaskTrend} isLoading={isLoading} className="flex-1" />
         </div>
       </div>
 

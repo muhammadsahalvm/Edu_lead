@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
+import { Select } from '../components/common/Select';
 import { StatusBadge, AgeingBadge, PriorityBadge } from '../components/common/Badge';
 import { EmptyState } from '../components/common/EmptyState';
 import { LoadingSkeleton } from '../components/common/LoadingSkeleton';
@@ -230,7 +231,7 @@ export const LeadsListPage = () => {
       </div>
 
       {/* Multi-Dimensional Filter Toolbar (Stitch) */}
-      <Card bodyClassName="p-4 space-y-3" className="shadow-xs border-slate-200/90">
+      <Card bodyClassName="p-4 space-y-3" className="!overflow-visible shadow-xs border-slate-200/90">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
           {/* Search box */}
           <div className="lg:col-span-4 relative flex items-center">
@@ -240,7 +241,7 @@ export const LeadsListPage = () => {
               placeholder="Search by student name, phone, email, or application #..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-8 text-xs rounded-lg border border-slate-200/90 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/60 focus:bg-white transition-all placeholder:text-slate-400"
+              className="w-full h-9 pl-9 pr-8 text-xs rounded-lg border border-slate-200/90 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 bg-slate-50 hover:bg-slate-100/60 focus:bg-white transition-all placeholder:text-slate-400"
             />
             {search && (
               <button
@@ -255,96 +256,75 @@ export const LeadsListPage = () => {
 
           {/* Status Filter */}
           <div className="lg:col-span-2">
-            <select
+            <Select
               value={statusFilter}
+              placeholder="All Statuses"
+              options={STATUS_CHOICES}
+              aria-label="Filter by status"
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
-            >
-              <option value="">All Statuses</option>
-              {STATUS_CHOICES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
+              className="!h-9 !rounded-lg !border-slate-200/90 !bg-slate-50 !px-2.5 !py-1.5 !text-xs"
+            />
           </div>
 
           {/* Course Filter */}
           <div className="lg:col-span-2">
-            <select
+            <Select
               value={courseFilter}
+              placeholder="All Programs"
+              options={courses.map((course) => ({ value: course.id, label: `${course.code} - ${course.name}` }))}
+              aria-label="Filter by academic program"
               onChange={(e) => {
                 setCourseFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
-            >
-              <option value="">All Programs</option>
-              {courses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.code} - {c.name}
-                </option>
-              ))}
-            </select>
+              className="!h-9 !rounded-lg !border-slate-200/90 !bg-slate-50 !px-2.5 !py-1.5 !text-xs"
+            />
           </div>
 
           {/* Source Filter */}
           <div className="lg:col-span-2">
-            <select
+            <Select
               value={sourceFilter}
+              placeholder="All Sources"
+              options={SOURCE_CHOICES}
+              aria-label="Filter by lead source"
               onChange={(e) => {
                 setSourceFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
-            >
-              <option value="">All Sources</option>
-              {SOURCE_CHOICES.map((src) => (
-                <option key={src.value} value={src.value}>
-                  {src.label}
-                </option>
-              ))}
-            </select>
+              className="!h-9 !rounded-lg !border-slate-200/90 !bg-slate-50 !px-2.5 !py-1.5 !text-xs"
+            />
           </div>
 
           {/* Counsellor / Priority Filter */}
           <div className="lg:col-span-2">
             {isManager ? (
-              <select
+              <Select
                 value={counsellorFilter}
+                placeholder="All Counsellors"
+                options={[{ value: 'unassigned', label: '⚠️ Unassigned Leads' }, ...counsellors.map((counsellor) => ({ value: counsellor.id, label: counsellor.full_name || counsellor.username }))]}
+                aria-label="Filter by counsellor"
                 onChange={(e) => {
                   setCounsellorFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
-              >
-                <option value="">All Counsellors</option>
-                <option value="unassigned">⚠️ Unassigned Leads</option>
-                {counsellors.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.full_name || c.username}
-                  </option>
-                ))}
-              </select>
+                className="!h-9 !rounded-lg !border-slate-200/90 !bg-slate-50 !px-2.5 !py-1.5 !text-xs"
+              />
             ) : (
-              <select
+              <Select
                 value={priorityFilter}
+                placeholder="All Priorities"
+                options={PRIORITY_CHOICES}
+                aria-label="Filter by priority"
                 onChange={(e) => {
                   setPriorityFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full h-9 px-2.5 bg-slate-50 hover:bg-slate-100/60 focus:bg-white rounded-lg border border-slate-200/90 text-xs text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 focus:outline-none transition-all cursor-pointer"
-              >
-                <option value="">All Priorities</option>
-                {PRIORITY_CHOICES.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
+                className="!h-9 !rounded-lg !border-slate-200/90 !bg-slate-50 !px-2.5 !py-1.5 !text-xs"
+              />
             )}
           </div>
         </div>
@@ -406,19 +386,22 @@ export const LeadsListPage = () => {
             {/* Sorting selector */}
             <div className="flex items-center gap-1 ml-2 text-slate-500">
               <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-              <select
+              <Select
                 value={ordering}
+                placeholder="Newest First"
+                options={[
+                  { value: '-created_at', label: 'Newest First' },
+                  { value: 'created_at', label: 'Oldest First' },
+                  { value: '-updated_at', label: 'Recently Updated' },
+                  { value: 'first_name', label: 'Candidate (A-Z)' },
+                ]}
+                aria-label="Sort leads"
                 onChange={(e) => {
                   setOrdering(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="bg-transparent text-xs text-slate-600 focus:outline-none cursor-pointer font-medium"
-              >
-                <option value="-created_at">Newest First</option>
-                <option value="created_at">Oldest First</option>
-                <option value="-updated_at">Recently Updated</option>
-                <option value="first_name">Candidate (A-Z)</option>
-              </select>
+                className="!rounded-lg !border-transparent !bg-transparent !px-2 !py-1 !text-xs !text-slate-600"
+              />
             </div>
           </div>
 
@@ -426,7 +409,7 @@ export const LeadsListPage = () => {
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 py-1"
+              className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 py-1"
             >
               <X className="w-3.5 h-3.5" />
               <span>Clear All Filters</span>
@@ -444,7 +427,12 @@ export const LeadsListPage = () => {
           onRetry={fetchLeads}
         />
       ) : (
-        <Card bodyClassName="p-0 overflow-x-auto" className="shadow-xs">
+        <Card
+          title="Leads Information"
+          subtitle="Browse and manage your admissions enquiries"
+          bodyClassName="p-0 overflow-x-auto"
+          className="shadow-xs rounded-2xl"
+        >
           {isLoading ? (
             <div className="p-8 space-y-3">
               <LoadingSkeleton variant="table-row" count={8} />
@@ -478,48 +466,47 @@ export const LeadsListPage = () => {
             </div>
           ) : (
             <>
-              {/* Desktop High-Density CRM Table */}
+              {/* Spacious CRM table */}
               <div className="hidden md:block">
-                <table className="w-full text-left text-xs saas-table">
-                  <thead className="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <table className="w-full min-w-[1040px] text-left text-xs saas-table">
+                  <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                     <tr>
-                      <th className="py-3 px-4">Lead ID</th>
-                      <th className="py-3 px-4">Candidate</th>
-                      <th className="py-3 px-4">Program</th>
-                      <th className="py-3 px-4">Source</th>
-                      <th className="py-3 px-4">Status</th>
-                      <th className="py-3 px-4">Priority</th>
-                      <th className="py-3 px-4">Counsellor</th>
-                      <th className="py-3 px-4">Ageing</th>
-                      <th className="py-3 px-4">Next Follow-up</th>
-                      <th className="py-3 px-4 text-right">Actions</th>
+                      <th className="py-4 px-5">Candidate</th>
+                      <th className="py-4 px-5">Program</th>
+                      <th className="py-4 px-5">Source</th>
+                      <th className="py-4 px-5">Status</th>
+                      <th className="py-4 px-5">Priority</th>
+                      <th className="py-4 px-5">Counsellor</th>
+                      <th className="py-4 px-5">Ageing</th>
+                      <th className="py-4 px-5">Next Follow-up</th>
+                      <th className="py-4 px-5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {leads.map((lead) => (
                       <tr
                         key={lead.id}
-                        className="hover:bg-slate-50/80 transition-colors group cursor-pointer"
+                        className="hover:bg-blue-50/40 transition-colors group cursor-pointer"
                         onClick={() => navigate(`/leads/${lead.id}`)}
                       >
-                        <td className="py-3 px-4 font-mono font-semibold text-indigo-600">
-                          <Link
-                            to={`/leads/${lead.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="hover:underline"
-                          >
-                            {lead.lead_number}
-                          </Link>
-                        </td>
-
-                        <td className="py-3 px-4">
-                          <div className="font-semibold text-slate-900">{lead.full_name}</div>
-                          <div className="text-[11px] text-slate-400 truncate max-w-[170px] mt-0.5">
+                        <td className="py-4 px-5">
+                          <div className="flex items-center gap-3 min-w-[220px]">
+                            <span className="w-9 h-9 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold flex items-center justify-center shrink-0">
+                              {(lead.full_name || '?').split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
+                            </span>
+                            <div className="min-w-0">
+                              <div className="font-semibold text-slate-900 truncate">{lead.full_name}</div>
+                              <Link to={`/leads/${lead.id}`} onClick={(e) => e.stopPropagation()} className="font-mono text-[10px] text-blue-600 hover:underline">
+                                {lead.lead_number}
+                              </Link>
+                            </div>
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate max-w-[220px] mt-1 ml-12">
                             {lead.phone} • {lead.email}
                           </div>
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           <span
                             className="text-slate-800 font-medium truncate max-w-[140px] block"
                             title={lead.course_name}
@@ -528,19 +515,19 @@ export const LeadsListPage = () => {
                           </span>
                         </td>
 
-                        <td className="py-3 px-4 text-slate-600">
+                        <td className="py-4 px-5 text-slate-600">
                           {lead.source_display || lead.source}
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           <StatusBadge status={lead.status} />
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           <PriorityBadge priority={lead.priority} />
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           {lead.counsellor ? (
                             <span className="text-slate-700 font-medium flex items-center gap-1.5">
                               <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -555,11 +542,11 @@ export const LeadsListPage = () => {
                           )}
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           <AgeingBadge category={lead.ageing_category} days={lead.age_days} />
                         </td>
 
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-5">
                           {lead.next_followup_at ? (
                             <span className="text-slate-700 font-medium flex items-center gap-1">
                               <Calendar className="w-3 h-3 text-slate-400" />
@@ -573,10 +560,10 @@ export const LeadsListPage = () => {
                           )}
                         </td>
 
-                        <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <td className="py-4 px-5 text-right" onClick={(e) => e.stopPropagation()}>
                           <Link
                             to={`/leads/${lead.id}`}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800"
                           >
                             <span>View</span>
                             <ExternalLink className="w-3 h-3" />
@@ -598,7 +585,7 @@ export const LeadsListPage = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-xs text-indigo-600">
+                        <span className="font-mono font-bold text-xs text-blue-600">
                           {lead.lead_number}
                         </span>
                         <StatusBadge status={lead.status} />

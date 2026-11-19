@@ -108,6 +108,22 @@ class LeadManagementAPITests(APITestCase):
         token = response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
+    def test_followup_assignee_can_view_but_not_edit_another_counsellors_lead(self):
+        FollowUp.objects.create(
+            lead=self.lead_2,
+            assigned_to=self.counsellor_1,
+            scheduled_at=timezone.now() + timedelta(hours=1),
+        )
+        self.authenticate(self.counsellor_1)
+
+        detail_url = reverse('leads:lead-detail', args=[self.lead_2.id])
+        detail_response = self.client.get(detail_url)
+        self.assertEqual(detail_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(detail_response.data['id'], self.lead_2.id)
+
+        update_response = self.client.patch(detail_url, {'notes': 'Updated by task assignee'})
+        self.assertEqual(update_response.status_code, status.HTTP_403_FORBIDDEN)
+
     # 1. Lead Creation & Auto-Assignment
     def test_01_create_lead_with_round_robin_auto_assignment(self):
         self.authenticate(self.manager)

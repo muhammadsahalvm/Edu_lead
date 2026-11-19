@@ -7,17 +7,17 @@ export const AppLayout = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar */}
-      <Sidebar isMobileOpen={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
+    <div className="min-h-screen w-full bg-white p-0">
+      <div className="app-frame flex h-screen w-full max-w-none overflow-hidden rounded-none bg-white shadow-none">
+        <Sidebar isMobileOpen={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
-      {/* Main Content Area */}
-      <div className="flex-1 md:pl-64 flex flex-col min-w-0">
-        <Header onOpenMobile={() => setIsMobileOpen(true)} />
+        <div className="app-workspace flex min-h-0 min-w-0 flex-1 flex-col bg-white">
+          <Header onOpenMobile={() => setIsMobileOpen(true)} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          <Outlet />
-        </main>
+          <main className="min-h-0 flex-1 overflow-y-auto bg-[#f7f8fa] p-4 sm:p-6 lg:p-7">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );

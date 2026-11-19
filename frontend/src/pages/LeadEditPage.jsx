@@ -129,7 +129,7 @@ export const LeadEditPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
-        <LoadingSpinner size="lg" className="text-indigo-600" />
+        <LoadingSpinner size="lg" className="text-blue-600" />
         <p className="text-xs text-slate-500 font-medium">Loading lead #{id} for editing...</p>
       </div>
     );
@@ -242,7 +242,7 @@ export const LeadEditPage = () => {
               </label>
               <textarea
                 rows={4}
-                className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
