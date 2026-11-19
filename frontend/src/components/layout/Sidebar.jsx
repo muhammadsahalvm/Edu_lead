@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -6,9 +6,8 @@ import {
   CalendarCheck,
   BarChart3,
   UserPlus,
-  GraduationCap,
   LogOut,
-  Shield,
+  ChevronDown,
   Building2,
   CheckCircle2,
   XCircle,
@@ -17,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
 export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, isManager, isCounsellor, toggleAvailability, logout } = useAuth();
   const toast = useToast();
 
@@ -66,9 +66,7 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
           {/* Brand & Institution Badge */}
           <div className="p-4 border-b border-slate-100 flex flex-col gap-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
-                <GraduationCap className="w-5 h-5" />
-              </div>
+              <img src="/edulead-main-logo.png" alt="EduLead logo" className="h-10 w-10 shrink-0 object-contain" />
               <div className="flex flex-col">
                 <span className="font-semibold text-slate-900 text-base leading-tight tracking-tight">
                   EduLead
@@ -239,7 +237,13 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
 
         {/* Bottom Profile Bar */}
         <div className="mt-3 p-3 border-t border-slate-100 bg-white flex flex-col gap-2">
-          <div className="p-2 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setIsProfileOpen((open) => !open)}
+            aria-expanded={isProfileOpen}
+            aria-controls="sidebar-profile-details"
+            className="w-full p-2 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between text-left transition-colors hover:border-blue-200 hover:bg-slate-50 focus-visible:outline-blue-600"
+          >
             <div className="flex items-center gap-2 overflow-hidden">
               <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center font-bold text-xs shrink-0">
                 {displayName.charAt(0).toUpperCase()}
@@ -253,10 +257,18 @@ export const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
                 </span>
               </div>
             </div>
-            {isManager && (
-              <Shield className="w-3.5 h-3.5 text-purple-600 shrink-0" title="Institution Manager" />
-            )}
-          </div>
+            <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isProfileOpen && (
+            <div id="sidebar-profile-details" className="rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2.5 text-xs">
+              <p className="font-medium text-slate-800">Signed in as</p>
+              <p className="mt-0.5 truncate text-slate-500" title={user?.username || displayName}>
+                {user?.username || displayName}
+              </p>
+              <p className="mt-2 border-t border-slate-200 pt-2 text-slate-600">{userRoleLabel}</p>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1 px-1 pt-1">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">General</span>

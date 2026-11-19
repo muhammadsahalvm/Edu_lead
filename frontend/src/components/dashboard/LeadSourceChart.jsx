@@ -11,13 +11,13 @@ import { EmptyState } from '../common/EmptyState';
 import { Compass } from 'lucide-react';
 
 const SOURCE_COLORS = [
-  '#2563eb',
-  '#0ea5e9',
-  '#38bdf8',
-  '#1d4ed8',
-  '#60a5fa',
-  '#0284c7',
-  '#93c5fd',
+  '#004A6B',
+  '#00638E',
+  '#397F9C',
+  '#8CB9CC',
+  '#BFD8E3',
+  '#2B2B2B',
+  '#141414',
 ];
 
 const CustomTooltip = ({ active, payload }) => {

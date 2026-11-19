@@ -59,20 +59,20 @@ export const LeadCourseChart = ({ courses = [], isLoading }) => {
               >
                 <defs>
                   <linearGradient id="leadCourseBlue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2563eb" />
-                    <stop offset="100%" stopColor="#bfdbfe" stopOpacity="0.45" />
+                    <stop offset="0%" stopColor="#004A6B" />
+                    <stop offset="100%" stopColor="#8CB9CC" stopOpacity="0.55" />
                   </linearGradient>
                 </defs>
-                <CartesianGrid vertical={false} stroke="#e6ebf2" strokeDasharray="3 5" />
+                <CartesianGrid vertical={false} stroke="#DFEAF0" strokeDasharray="3 5" />
                 <XAxis
                   dataKey="course_code"
                   axisLine={false}
                   tickLine={false}
                   tickMargin={10}
-                  tick={{ fontSize: 10, fill: '#64748b' }}
+                  tick={{ fontSize: 10, fill: '#52656D' }}
                   interval={0}
                 />
-                <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#6C8791' }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="count" barSize={30} radius={[8, 8, 0, 0]} fill="url(#leadCourseBlue)" />
               </BarChart>

@@ -115,14 +115,14 @@ export const Header = ({ onOpenMobile }) => {
         </div>
 
         {/* Global Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="relative flex min-w-0 flex-1 items-center max-w-lg">
+        <form onSubmit={handleSearchSubmit} className="relative mx-auto flex min-w-0 flex-1 items-center max-w-lg">
           <Search className="w-4 h-4 absolute left-3 text-slate-400 pointer-events-none" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search leads, phone, email, application..."
-            className="w-full h-9 pl-9 pr-12 bg-slate-50 hover:bg-slate-100/70 focus:bg-white rounded-lg border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+            className="w-full h-9 pl-9 pr-12 bg-slate-50 hover:bg-slate-100/70 focus:bg-white rounded-xl border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
           />
           <kbd className="absolute right-2.5 font-mono-data text-[10px] bg-white text-slate-400 border border-slate-200 px-1 py-0.5 rounded shadow-2xs pointer-events-none">
             ↵
@@ -150,7 +150,7 @@ export const Header = ({ onOpenMobile }) => {
           </button>
 
           {isNotificationsOpen && (
-            <section role="dialog" aria-label="Notifications" className="absolute right-0 top-12 z-50 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.18)]">
+            <section role="dialog" aria-label="Notifications" className="absolute right-0 top-12 z-50 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_48px_rgba(0,74,107,0.18)]">
               <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5">
                 <div>
                   <h2 className="text-sm font-semibold text-slate-900">Notifications</h2>

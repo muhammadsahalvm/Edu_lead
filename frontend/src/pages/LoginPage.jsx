@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GraduationCap, Lock, User, AlertCircle, ShieldCheck, Sparkles, UsersRound, BriefcaseBusiness } from 'lucide-react';
+import { Lock, User, AlertCircle, Sparkles, UsersRound, BriefcaseBusiness } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Button } from '../components/common/Button';
@@ -47,12 +47,12 @@ export const LoginPage = () => {
 
   return (
     <main className="login-page min-h-screen flex items-center justify-center p-4 sm:p-8">
-      <section className="login-card grid w-full max-w-5xl overflow-hidden rounded-[28px] bg-white sm:grid-cols-2">
-        <div className="login-visual relative flex min-h-[280px] flex-col justify-between overflow-hidden p-8 sm:min-h-[590px] sm:p-10">
+      <section className="login-card grid w-full max-w-4xl overflow-hidden rounded-[28px] bg-white sm:grid-cols-[0.42fr_0.58fr]">
+        <div className="login-visual relative flex min-h-[260px] flex-col justify-between overflow-hidden p-7 sm:min-h-[440px] sm:p-8">
           <div className="login-orb login-orb-one" />
           <div className="login-orb login-orb-two" />
           <div className="relative z-10 flex items-center gap-3 text-white">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/35 backdrop-blur-sm"><GraduationCap className="h-6 w-6" /></div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white p-1.5 shadow-sm"><img src="/edulead-main-logo.png" alt="EduLead logo" className="h-full w-full object-contain" /></div>
             <div><span className="block text-lg font-bold tracking-tight">EduLead</span><span className="text-[10px] font-semibold uppercase tracking-[.18em] text-white/75">Admissions CRM</span></div>
           </div>
           <div className="relative z-10 max-w-sm text-white">
@@ -64,17 +64,16 @@ export const LoginPage = () => {
           <div className="relative z-10 text-xs font-medium text-white/70">Your admissions workspace</div>
         </div>
 
-        <div className="flex items-center justify-center p-7 sm:p-10 lg:p-14">
+        <div className="flex items-center justify-center p-6 sm:p-7 lg:p-8">
           <div className="w-full max-w-md">
-            <div className="mb-8">
-              <span className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700"><ShieldCheck className="h-5 w-5" /></span>
+            <div className="mb-5">
               <h2 className="text-2xl font-bold tracking-tight text-slate-950">Welcome back</h2>
               <p className="mt-1.5 text-sm text-slate-500">Sign in to continue to your EduLead workspace.</p>
             </div>
 
             {error && <div role="alert" className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-medium text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="username" className="mb-2 block text-sm font-semibold text-slate-700">Username</label>
                 <div className="relative"><User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input id="username" name="username" type="text" required autoComplete="username" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} className="login-input w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400" /></div>
@@ -86,12 +85,12 @@ export const LoginPage = () => {
               <Button type="submit" variant="primary" size="md" isLoading={isSubmitting} className="login-submit w-full rounded-xl py-3 text-sm font-semibold">Sign in to EduLead</Button>
             </form>
 
-            <div className="my-6 flex items-center gap-3 text-[11px] font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />Choose a workspace<span className="h-px flex-1 bg-slate-200" /></div>
+            <div className="my-4 flex items-center gap-3 text-[11px] font-medium text-slate-400"><span className="h-px flex-1 bg-slate-200" />Choose a workspace<span className="h-px flex-1 bg-slate-200" /></div>
             <div className="grid grid-cols-2 gap-3">
               <button type="button" onClick={() => fillQuickCredentials('manager')} className="role-choice group flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 group-hover:bg-blue-100"><BriefcaseBusiness className="h-5 w-5" /></span><span><span className="block text-sm font-semibold text-slate-800">Manager</span><span className="block text-[11px] text-slate-500">Team overview</span></span></button>
               <button type="button" onClick={() => fillQuickCredentials('counsellor')} className="role-choice group flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700 group-hover:bg-blue-100"><UsersRound className="h-5 w-5" /></span><span><span className="block text-sm font-semibold text-slate-800">Counsellor</span><span className="block text-[11px] text-slate-500">My enquiries</span></span></button>
             </div>
-            <p className="mt-7 text-center text-xs text-slate-400">Secure access for your admissions team</p>
+            <p className="mt-5 text-center text-xs text-slate-400">Secure access for your admissions team</p>
           </div>
         </div>
       </section>

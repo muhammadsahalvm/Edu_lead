@@ -197,7 +197,7 @@ export const Select = forwardRef(
         </button>
 
         {isOpen && (
-          <div className={`absolute left-0 right-0 z-[60] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.16)] ${opensUpward ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
+          <div className={`absolute left-0 right-0 z-[60] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_12px_30px_rgba(0,74,107,0.16)] ${opensUpward ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
             <div id={listboxId} role="listbox" aria-labelledby={label ? undefined : selectId} className="max-h-40 overflow-y-auto p-1.5">
               {placeholder && (
                 <div

@@ -14,7 +14,7 @@ export const AppLayout = () => {
         <div className="app-workspace flex min-h-0 min-w-0 flex-1 flex-col bg-white">
           <Header onOpenMobile={() => setIsMobileOpen(true)} />
 
-          <main className="min-h-0 flex-1 overflow-y-auto bg-[#f7f8fa] p-4 sm:p-6 lg:p-7">
+          <main className="min-h-0 flex-1 overflow-y-auto bg-[#F7FAFB] p-4 sm:p-6 lg:p-7">
             <Outlet />
           </main>
         </div>

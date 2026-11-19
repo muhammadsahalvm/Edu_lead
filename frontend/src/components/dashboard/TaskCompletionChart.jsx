@@ -55,30 +55,30 @@ export const TaskCompletionChart = ({ data = [], isLoading = false, className = 
         <div className="min-h-[280px] w-full flex-1 rounded-xl bg-slate-50/70 px-2 py-2">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 14, right: 14, bottom: 4, left: -18 }}>
-              <CartesianGrid vertical={false} stroke="#e6ebf2" strokeDasharray="3 5" />
+              <CartesianGrid vertical={false} stroke="#DFEAF0" strokeDasharray="3 5" />
               <XAxis
                 dataKey="dayLabel"
                 axisLine={false}
                 tickLine={false}
                 tickMargin={10}
-                tick={{ fontSize: 11, fill: '#64748b' }}
+                tick={{ fontSize: 11, fill: '#52656D' }}
               />
               <YAxis
                 allowDecimals={false}
                 axisLine={false}
                 tickLine={false}
                 width={32}
-                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                tick={{ fontSize: 10, fill: '#6C8791' }}
               />
               <Tooltip content={<CompletionTooltip />} />
               <Line
                 type="monotone"
                 dataKey="count"
                 name="Tasks completed"
-                stroke="#2563eb"
+                stroke="#00638E"
                 strokeWidth={3}
-                dot={{ r: 3, fill: '#ffffff', stroke: '#2563eb', strokeWidth: 2 }}
-                activeDot={{ r: 5, fill: '#2563eb', stroke: '#ffffff', strokeWidth: 2 }}
+                dot={{ r: 3, fill: '#ffffff', stroke: '#00638E', strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: '#00638E', stroke: '#ffffff', strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
