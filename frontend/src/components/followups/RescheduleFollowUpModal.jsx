@@ -100,7 +100,7 @@ export const RescheduleFollowUpModal = ({ followup, isOpen, onClose, onUpdated }
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <X className="w-4 h-4" />
           </button>
@@ -131,7 +131,7 @@ export const RescheduleFollowUpModal = ({ followup, isOpen, onClose, onUpdated }
               required
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -141,7 +141,7 @@ export const RescheduleFollowUpModal = ({ followup, isOpen, onClose, onUpdated }
             </label>
             <textarea
               rows={2}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="e.g. Candidate requested call tomorrow after 4 PM..."
               value={rescheduleNotes}
               onChange={(e) => setRescheduleNotes(e.target.value)}

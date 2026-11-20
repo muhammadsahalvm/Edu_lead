@@ -9,7 +9,7 @@ export const Badge = ({
 }) => {
   const variants = {
     neutral: 'bg-slate-50 text-slate-600 border-slate-200/80',
-    primary: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    primary: 'bg-blue-50 text-blue-700 border-blue-200',
     success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     warning: 'bg-amber-50 text-amber-700 border-amber-200',
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
@@ -20,7 +20,7 @@ export const Badge = ({
 
   const dotColors = {
     neutral: 'bg-slate-400',
-    primary: 'bg-indigo-500',
+    primary: 'bg-blue-500',
     success: 'bg-emerald-500',
     warning: 'bg-amber-500',
     danger: 'bg-rose-500',
@@ -58,33 +58,33 @@ export const StatusBadge = ({ status }) => {
   const statusMap = {
     NEW: {
       label: 'New',
-      className: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-      dotClass: 'bg-[#2563eb]',
+      className: 'bg-[#F3F8FA] text-[#00638E] border-[#BFD8E3]',
+      dotClass: 'bg-[#00638E]',
     },
     CONTACTED: {
       label: 'Contacted',
-      className: 'bg-[#f0f9ff] text-[#0284c7] border-[#bae6fd]',
-      dotClass: 'bg-[#0284c7]',
+      className: 'bg-[#EAF3F6] text-[#004A6B] border-[#8CB9CC]',
+      dotClass: 'bg-[#004A6B]',
     },
     INTERESTED: {
       label: 'Interested',
-      className: 'bg-[#eef2ff] text-[#4f46e5] border-[#c7d2fe]',
-      dotClass: 'bg-[#4f46e5]',
+      className: 'bg-[#D7E8EF] text-[#00638E] border-[#BFD8E3]',
+      dotClass: 'bg-[#00638E]',
     },
     COUNSELLING_SCHEDULED: {
       label: 'Counselling Scheduled',
-      className: 'bg-[#f5f3ff] text-[#7c3aed] border-[#ddd6fe]',
-      dotClass: 'bg-[#7c3aed]',
+      className: 'bg-[#EAF3F6] text-[#004A6B] border-[#BFD8E3]',
+      dotClass: 'bg-[#004A6B]',
     },
     APPLICATION_STARTED: {
       label: 'App Started',
-      className: 'bg-[#fffbeb] text-[#d97706] border-[#fde68a]',
-      dotClass: 'bg-[#d97706]',
+      className: 'bg-[#F3F8FA] text-[#00638E] border-[#D7E8EF]',
+      dotClass: 'bg-[#00638E]',
     },
     APPLICATION_SUBMITTED: {
       label: 'App Submitted',
-      className: 'bg-[#fff7ed] text-[#ea580c] border-[#fed7aa]',
-      dotClass: 'bg-[#ea580c]',
+      className: 'bg-[#D7E8EF] text-[#004A6B] border-[#8CB9CC]',
+      dotClass: 'bg-[#004A6B]',
     },
     CONVERTED: {
       label: 'Converted / Enrolled',
@@ -93,8 +93,8 @@ export const StatusBadge = ({ status }) => {
     },
     NO_RESPONSE: {
       label: 'No Response',
-      className: 'bg-[#f8fafc] text-[#64748b] border-[#e2e8f0]',
-      dotClass: 'bg-[#64748b]',
+      className: 'bg-[#F7FAFB] text-[#52656D] border-[#DFEAF0]',
+      dotClass: 'bg-[#657F8A]',
     },
     LOST: {
       label: 'Lost / Closed',
@@ -103,8 +103,8 @@ export const StatusBadge = ({ status }) => {
     },
     NOT_INTERESTED: {
       label: 'Not Interested',
-      className: 'bg-[#f1f5f9] text-[#475569] border-[#cbd5e1]',
-      dotClass: 'bg-[#475569]',
+      className: 'bg-[#EFF5F7] text-[#40545D] border-[#BFD8E3]',
+      dotClass: 'bg-[#40545D]',
     },
   };
 

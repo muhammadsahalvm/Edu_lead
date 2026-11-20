@@ -15,13 +15,9 @@ class DuplicateService:
        - A potential duplicate is flagged if:
          * Cleaned phone matches an existing lead's phone, OR
          * Normalized email matches an existing lead's email.
-    3. Non-Blocking Approach:
-       - Educational enquiries frequently recur (e.g. student inquires for B.Tech CSE,
-         then 2 weeks later inquires for B.Tech AI).
-       - Duplicate detection does NOT bluntly abort the submission. Instead:
-         * Flagged as a potential duplicate.
-         * Previous lead records are returned in the API response.
-         * An audit trail entry notes the relationship for counsellor awareness.
+    3. Intake validation:
+       - The service returns matching records so the manager-facing API can
+         inspect them. LeadCreateSerializer rejects an intake with a match.
     """
 
     @classmethod
@@ -39,10 +35,10 @@ class DuplicateService:
         return email.strip().lower() if email else ""
 
     @classmethod
-    def find_potential_duplicates(cls, email: str = None, phone: str = None, exclude_lead_id: int = None) -> list[dict]:
+    def find_potential_duplicates(cls, email: str = None, phone: str = None, exclude_lead_id: int = None, user=None) -> list[dict]:
         """
         Searches existing non-deleted leads for phone or email matches.
-        Returns a list of matching lead summaries with match reason.
+        Returns up to five matching lead summaries with match reason.
         """
         cleaned_phone = cls.clean_phone(phone)
         cleaned_email = cls.clean_email(email)
@@ -59,6 +55,9 @@ class DuplicateService:
         leads = Lead.objects.filter(is_deleted=False).filter(query).select_related('course', 'counsellor')
         if exclude_lead_id:
             leads = leads.exclude(id=exclude_lead_id)
+        # Counsellors can only inspect potential matches in their own queue.
+        if user is not None and not user.is_manager:
+            leads = leads.filter(counsellor=user)
 
         results = []
         for lead in leads[:5]:  # limit to top 5 matches

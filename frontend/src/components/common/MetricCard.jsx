@@ -15,7 +15,7 @@ export const MetricCard = ({
 }) => {
   const iconVariants = {
     default: 'text-slate-600 bg-slate-100 border-slate-200',
-    primary: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    primary: 'text-blue-600 bg-blue-50 border-blue-200',
     success: 'text-emerald-600 bg-emerald-50 border-emerald-200',
     warning: 'text-amber-600 bg-amber-50 border-amber-200',
     danger: 'text-rose-600 bg-rose-50 border-rose-200',
@@ -25,7 +25,7 @@ export const MetricCard = ({
 
   if (isLoading) {
     return (
-      <div className={`p-4 bg-white rounded-xl border border-slate-200/80 shadow-xs animate-pulse ${className}`}>
+      <div className={`p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs animate-pulse ${className}`}>
         <div className="flex items-center justify-between mb-3">
           <div className="h-3 w-20 bg-slate-200 rounded" />
           <div className="w-7 h-7 rounded-lg bg-slate-100" />
@@ -39,7 +39,7 @@ export const MetricCard = ({
   return (
     <div
       onClick={onClick}
-      className={`p-4 bg-white rounded-xl border transition-all duration-150 shadow-xs flex flex-col justify-between ${
+      className={`p-4 bg-white rounded-2xl border transition-all duration-150 shadow-xs flex flex-col justify-between ${
         alert
           ? 'border-rose-300 ring-1 ring-rose-200/70 bg-gradient-to-br from-white to-rose-50/30'
           : 'border-slate-200/90 hover:border-slate-300 hover:shadow-sm'

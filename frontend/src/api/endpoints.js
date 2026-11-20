@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     MISSED: (id) => `/api/v1/leads/follow-ups/${id}/mark-missed/`,
     UPCOMING: '/api/v1/leads/follow-ups/upcoming/',
     OVERDUE: '/api/v1/leads/follow-ups/overdue/',
+    COMPLETED_SUMMARY: '/api/v1/leads/follow-ups/completed-summary/',
   },
   ANALYTICS: {
     DASHBOARD: '/api/v1/analytics/dashboard/',

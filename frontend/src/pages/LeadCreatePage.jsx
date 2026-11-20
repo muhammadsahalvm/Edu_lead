@@ -347,7 +347,7 @@ export const LeadCreatePage = () => {
               </label>
               <textarea
                 rows={3}
-                className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 placeholder="Candidate background, qualifying test scores, queries, or scheduled visit notes..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}

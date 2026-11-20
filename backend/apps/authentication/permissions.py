@@ -53,7 +53,7 @@ class IsManagerOrAssignedCounsellor(permissions.BasePermission):
 
         # Check FollowUp object
         if hasattr(obj, 'assigned_to_id'):
-            return obj.assigned_to_id == user.id or (obj.lead and obj.lead.counsellor_id == user.id)
+            return bool(obj.lead and obj.lead.counsellor_id == user.id)
 
         # Check ActivityLog object
         if hasattr(obj, 'lead') and hasattr(obj.lead, 'counsellor_id'):

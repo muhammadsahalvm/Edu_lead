@@ -3,7 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from .models import (
     Lead,
@@ -40,6 +41,13 @@ class LeadViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsManagerOrAssignedCounsellor]
     pagination_class = StandardResultsSetPagination
 
+    def get_permissions(self):
+        # New leads enter the queue through a manager so ownership is assigned
+        # centrally and counsellors cannot self-assign records.
+        if self.action == 'create':
+            return [permissions.IsAuthenticated(), IsManager()]
+        return super().get_permissions()
+
     def get_serializer_class(self):
         if self.action == 'create':
             return LeadCreateSerializer
@@ -66,26 +74,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         auto_assign = serializer.validated_data.pop('auto_assign', True)
         counsellor = serializer.validated_data.get('counsellor')
 
-        # Counsellors self-assign on manual creation; Managers can leave it to auto-assign or pick
-        if user.is_counsellor:
-            counsellor = user
-        elif not counsellor and auto_assign:
+        if not counsellor and auto_assign:
             counsellor = AssignmentService.get_next_counsellor()
 
         with transaction.atomic():
             lead = serializer.save(counsellor=counsellor)
 
-            # Check for potential duplicates to inform the frontend
-            potential_duplicates = DuplicateService.find_potential_duplicates(
-                email=lead.email,
-                phone=lead.phone,
-                exclude_lead_id=lead.id
-            )
-
             audit_details = f"Lead created by {user.get_full_name() or user.username} via {lead.get_source_display()}."
-            if potential_duplicates:
-                dup_numbers = [d['lead_number'] for d in potential_duplicates]
-                audit_details += f" (Note: Likely duplicate match with {', '.join(dup_numbers)})"
 
             ActivityLog.objects.create(
                 lead=lead,
@@ -96,8 +91,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             )
 
         response_data = LeadDetailSerializer(lead, context={'request': request}).data
-        response_data['duplicate_warning'] = bool(potential_duplicates)
-        response_data['matched_duplicates_count'] = len(potential_duplicates)
+        response_data['duplicate_warning'] = False
+        response_data['matched_duplicates_count'] = 0
 
         headers = self.get_success_headers(response_data)
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
@@ -215,12 +210,14 @@ class LeadViewSet(viewsets.ModelViewSet):
         duplicates = DuplicateService.find_potential_duplicates(
             email=email,
             phone=phone,
-            exclude_lead_id=exclude_id_int
+            exclude_lead_id=exclude_id_int,
+            user=request.user,
         )
         return Response({
             'has_duplicate': bool(duplicates),
             'count': len(duplicates),
-            'duplicates': duplicates
+            # Only managers may see identifying details for matching records.
+            'duplicates': duplicates if request.user.is_manager else [],
         }, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
@@ -260,7 +257,7 @@ class FollowUpViewSet(viewsets.ModelViewSet):
 
         # Role scoping: Managers see all; Counsellors see only assigned leads / tasks
         if not user.is_manager:
-            queryset = queryset.filter(Q(assigned_to=user) | Q(lead__counsellor=user))
+            queryset = queryset.filter(lead__counsellor=user)
 
         lead_id = self.request.query_params.get('lead')
         if lead_id:
@@ -284,6 +281,39 @@ class FollowUpViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=FollowUpStatus.PENDING, scheduled_at__gte=now)
 
         return queryset.order_by('scheduled_at')
+
+    @action(detail=False, methods=['get'], url_path='completed-summary')
+    def completed_summary(self, request):
+        """Return completed follow-up counts by day for the last seven days."""
+        from datetime import timedelta
+
+        end_date = timezone.localdate()
+        start_date = end_date - timedelta(days=6)
+        daily_counts = (
+            self.get_queryset()
+            .filter(
+                status=FollowUpStatus.COMPLETED,
+                completed_at__date__gte=start_date,
+                completed_at__date__lte=end_date,
+            )
+            .annotate(completed_date=TruncDate('completed_at'))
+            .values('completed_date')
+            .annotate(count=Count('id'))
+            .order_by('completed_date')
+        )
+        counts_by_date = {row['completed_date']: row['count'] for row in daily_counts}
+        results = [
+            {
+                'date': (start_date + timedelta(days=offset)).isoformat(),
+                'count': counts_by_date.get(start_date + timedelta(days=offset), 0),
+            }
+            for offset in range(7)
+        ]
+        return Response({
+            'period': 'last_7_days',
+            'total': sum(item['count'] for item in results),
+            'results': results,
+        })
 
     def perform_create(self, serializer):
         user = self.request.user

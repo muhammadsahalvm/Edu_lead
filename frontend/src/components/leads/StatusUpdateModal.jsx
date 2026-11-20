@@ -118,14 +118,14 @@ export const StatusUpdateModal = ({ lead, isOpen, onClose, onUpdated }) => {
               Update Lead Lifecycle Status
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Current: <span className="font-semibold text-indigo-600">{lead.status_display}</span>
+              Current: <span className="font-semibold text-blue-600">{lead.status_display}</span>
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <X className="w-4 h-4" />
           </button>
@@ -172,7 +172,7 @@ export const StatusUpdateModal = ({ lead, isOpen, onClose, onUpdated }) => {
                 </label>
                 <textarea
                   rows={2}
-                  className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Additional context on candidate decision or competitor details..."
                   value={lossNotes}
                   onChange={(e) => setLossNotes(e.target.value)}
@@ -187,7 +187,7 @@ export const StatusUpdateModal = ({ lead, isOpen, onClose, onUpdated }) => {
             </label>
             <textarea
               rows={2}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Operational remarks recorded in activity audit log..."
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}

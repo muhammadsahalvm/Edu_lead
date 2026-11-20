@@ -6,13 +6,14 @@ export const Card = ({
   subtitle,
   action,
   className = '',
+  headerClassName = '',
   bodyClassName = '',
   footer,
 }) => {
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden ${className}`}>
+    <div className={`bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,74,107,0.035)] overflow-hidden ${className}`}>
       {(title || action) && (
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+        <div className={`px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-4 ${headerClassName}`}>
           <div>
             {title && <h3 className="text-sm font-semibold text-slate-900">{title}</h3>}
             {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}

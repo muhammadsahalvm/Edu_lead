@@ -44,12 +44,12 @@ export const Input = forwardRef(
             required={required}
             aria-invalid={Boolean(error)}
             aria-describedby={describedBy}
-            className={`block w-full rounded-lg border text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 disabled:bg-slate-50 disabled:text-slate-400 ${
+            className={`block w-full rounded-lg border text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 disabled:bg-slate-50 disabled:text-slate-400 ${
               Icon ? 'pl-9 pr-3 py-2' : 'px-3 py-2'
             } ${
               error
                 ? 'border-rose-300 text-rose-900 focus:border-rose-500 focus-visible:ring-rose-500'
-                : 'border-slate-300 text-slate-900 focus:border-indigo-500 focus-visible:ring-indigo-500'
+                : 'border-slate-300 text-slate-900 focus:border-blue-500 focus-visible:ring-blue-500'
             } ${className}`}
             {...props}
           />

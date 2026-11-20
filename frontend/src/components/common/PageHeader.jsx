@@ -22,7 +22,7 @@ export const PageHeader = ({
                   {isLast || !crumb.to ? (
                     <span className="font-medium text-slate-700">{crumb.label}</span>
                   ) : (
-                    <Link to={crumb.to} className="hover:text-indigo-600 transition-colors">
+                    <Link to={crumb.to} className="hover:text-blue-600 transition-colors">
                       {crumb.label}
                     </Link>
                   )}

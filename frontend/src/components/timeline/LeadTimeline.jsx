@@ -20,8 +20,8 @@ const getActivityConfig = (type) => {
     case 'LEAD_CREATED':
       return {
         icon: Sparkles,
-        bgColor: 'bg-indigo-50 border-indigo-200 text-indigo-600',
-        dotColor: 'bg-indigo-600',
+        bgColor: 'bg-blue-50 border-blue-200 text-blue-600',
+        dotColor: 'bg-blue-600',
       };
     case 'LEAD_ASSIGNED':
     case 'LEAD_REASSIGNED':
@@ -73,7 +73,7 @@ export const LeadTimeline = ({ timeline = [], isLoading, error }) => {
   if (isLoading) {
     return (
       <div className="py-8 flex flex-col items-center justify-center gap-3">
-        <LoadingSpinner size="md" className="text-indigo-600" />
+        <LoadingSpinner size="md" className="text-blue-600" />
         <p className="text-xs text-slate-500 font-medium">Loading audit history...</p>
       </div>
     );
@@ -154,7 +154,7 @@ export const LeadTimeline = ({ timeline = [], isLoading, error }) => {
                     <ArrowRight className="w-3 h-3 text-slate-400" />
                   )}
                   {item.new_value && (
-                    <span className="font-mono bg-indigo-50 border border-indigo-200 text-indigo-700 px-1.5 py-0.5 rounded font-semibold">
+                    <span className="font-mono bg-blue-50 border border-blue-200 text-blue-700 px-1.5 py-0.5 rounded font-semibold">
                       {item.new_value}
                     </span>
                   )}

@@ -77,13 +77,13 @@ export const OperationalTasksSection = ({
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold border-b-2 -mb-px transition-colors ${
                 isActive
-                  ? 'border-indigo-600 text-indigo-600 bg-white rounded-t-lg'
+                  ? 'border-blue-600 text-blue-600 bg-white rounded-t-lg'
                   : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
               <Icon
                 className={`w-3.5 h-3.5 ${
-                  tab.danger ? 'text-rose-500' : tab.highlight ? 'text-indigo-500' : ''
+                  tab.danger ? 'text-rose-500' : tab.highlight ? 'text-blue-500' : ''
                 }`}
               />
               <span>{tab.label}</span>
@@ -92,7 +92,7 @@ export const OperationalTasksSection = ({
                   tab.danger
                     ? 'bg-rose-100 text-rose-700'
                     : isActive
-                    ? 'bg-indigo-100 text-indigo-700'
+                    ? 'bg-blue-100 text-blue-700'
                     : 'bg-slate-200 text-slate-600'
                 }`}
               >
@@ -134,7 +134,7 @@ export const OperationalTasksSection = ({
                       <div className="flex items-center gap-2">
                         <Link
                           to={`/leads/${item.lead}`}
-                          className="font-semibold text-xs text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                          className="font-semibold text-xs text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1"
                         >
                           <span>{item.lead_name || `Lead #${item.lead}`}</span>
                           <ExternalLink className="w-3 h-3 text-slate-400" />
@@ -189,7 +189,7 @@ export const OperationalTasksSection = ({
                       <div className="flex items-center gap-2">
                         <Link
                           to={`/leads/${item.lead}`}
-                          className="font-semibold text-xs text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                          className="font-semibold text-xs text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1"
                         >
                           <span>{item.lead_name || `Lead #${item.lead}`}</span>
                           <ExternalLink className="w-3 h-3 text-slate-400" />
@@ -235,14 +235,14 @@ export const OperationalTasksSection = ({
                   className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50 p-2 rounded-lg transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0">
                       {lead.first_name?.[0] || 'L'}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <Link
                           to={`/leads/${lead.id}`}
-                          className="font-semibold text-xs text-slate-900 hover:text-indigo-600 transition-colors flex items-center gap-1"
+                          className="font-semibold text-xs text-slate-900 hover:text-blue-600 transition-colors flex items-center gap-1"
                         >
                           <span>{lead.full_name}</span>
                           <ExternalLink className="w-3 h-3 text-slate-400" />

@@ -115,7 +115,7 @@ export const CompleteFollowUpModal = ({ followup, isOpen, onClose, onCompleted }
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <X className="w-4 h-4" />
           </button>
@@ -143,7 +143,7 @@ export const CompleteFollowUpModal = ({ followup, isOpen, onClose, onCompleted }
             </label>
             <textarea
               rows={3}
-              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full text-xs rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Record candidate interest level, entrance test marks, documents pending..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -157,7 +157,7 @@ export const CompleteFollowUpModal = ({ followup, isOpen, onClose, onCompleted }
                 type="checkbox"
                 checked={scheduleNext}
                 onChange={(e) => setScheduleNext(e.target.checked)}
-                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300"
+                className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
               />
               <span>Schedule Next Follow-up Interaction</span>
             </label>
@@ -179,7 +179,7 @@ export const CompleteFollowUpModal = ({ followup, isOpen, onClose, onCompleted }
                     required={scheduleNext}
                     value={nextDateTime}
                     onChange={(e) => setNextDateTime(e.target.value)}
-                    className="w-full text-xs rounded-lg border border-slate-300 p-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    className="w-full text-xs rounded-lg border border-slate-300 p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
               </div>

@@ -117,10 +117,12 @@ class LeadDetailSerializer(serializers.ModelSerializer):
         return 'Unassigned'
 
     def get_potential_duplicates(self, obj):
+        request = self.context.get('request')
         return DuplicateService.find_potential_duplicates(
             email=obj.email,
             phone=obj.phone,
-            exclude_lead_id=obj.id
+            exclude_lead_id=obj.id,
+            user=request.user if request else None,
         )
 
     def validate_phone(self, value):
@@ -201,16 +203,23 @@ class LeadCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Selected course is currently inactive and cannot accept new enquiries.")
         return value
 
-    def validate(self, attrs):
-        request = self.context.get('request')
-        user = request.user if request else None
+    def validate_counsellor(self, value):
+        if value and (value.role != UserRole.COUNSELLOR or not value.is_active):
+            raise serializers.ValidationError("Choose an active counsellor.")
+        return value
 
-        # If created by a counsellor and counsellor field is specified, enforce self-assignment
-        if user and user.is_counsellor:
-            if 'counsellor' in attrs and attrs['counsellor'] != user:
-                raise serializers.ValidationError({
-                    'counsellor': 'Counsellors cannot create leads directly assigned to other counsellors.'
-                })
+    def validate(self, attrs):
+        duplicates = DuplicateService.find_potential_duplicates(
+            email=attrs.get('email'),
+            phone=attrs.get('phone'),
+        )
+        if duplicates:
+            raise serializers.ValidationError({
+                'non_field_errors': [
+                    'A similar lead already exists. Review the existing record before creating another.'
+                ]
+            })
+
         return attrs
 
 
