@@ -34,7 +34,7 @@ class DashboardAnalyticsService:
 
         if not user.is_manager:
             leads_qs = leads_qs.filter(counsellor=user)
-            followups_qs = followups_qs.filter(Q(assigned_to=user) | Q(lead__counsellor=user))
+            followups_qs = followups_qs.filter(lead__counsellor=user)
 
         # Single-pass Lead aggregation
         lead_agg = leads_qs.aggregate(

@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from .models import (
@@ -41,6 +41,13 @@ class LeadViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsManagerOrAssignedCounsellor]
     pagination_class = StandardResultsSetPagination
 
+    def get_permissions(self):
+        # New leads enter the queue through a manager so ownership is assigned
+        # centrally and counsellors cannot self-assign records.
+        if self.action == 'create':
+            return [permissions.IsAuthenticated(), IsManager()]
+        return super().get_permissions()
+
     def get_serializer_class(self):
         if self.action == 'create':
             return LeadCreateSerializer
@@ -54,13 +61,7 @@ class LeadViewSet(viewsets.ModelViewSet):
 
         # Row-level authorization scoping
         if not user.is_manager:
-            # A counsellor assigned to a follow-up must be able to open its
-            # lead from the Needs Attention queue, even when another
-            # counsellor owns the lead. Object permissions keep this access
-            # read-only for non-owners.
-            queryset = queryset.filter(
-                Q(counsellor=user) | Q(follow_ups__assigned_to=user)
-            ).distinct()
+            queryset = queryset.filter(counsellor=user)
 
         # Apply searching, filtering, and ordering
         return LeadFilterHelper.filter_queryset(queryset, self.request.query_params, user)
@@ -73,26 +74,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         auto_assign = serializer.validated_data.pop('auto_assign', True)
         counsellor = serializer.validated_data.get('counsellor')
 
-        # Counsellors self-assign on manual creation; Managers can leave it to auto-assign or pick
-        if user.is_counsellor:
-            counsellor = user
-        elif not counsellor and auto_assign:
+        if not counsellor and auto_assign:
             counsellor = AssignmentService.get_next_counsellor()
 
         with transaction.atomic():
             lead = serializer.save(counsellor=counsellor)
 
-            # Check for potential duplicates to inform the frontend
-            potential_duplicates = DuplicateService.find_potential_duplicates(
-                email=lead.email,
-                phone=lead.phone,
-                exclude_lead_id=lead.id
-            )
-
             audit_details = f"Lead created by {user.get_full_name() or user.username} via {lead.get_source_display()}."
-            if potential_duplicates:
-                dup_numbers = [d['lead_number'] for d in potential_duplicates]
-                audit_details += f" (Note: Likely duplicate match with {', '.join(dup_numbers)})"
 
             ActivityLog.objects.create(
                 lead=lead,
@@ -103,8 +91,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             )
 
         response_data = LeadDetailSerializer(lead, context={'request': request}).data
-        response_data['duplicate_warning'] = bool(potential_duplicates)
-        response_data['matched_duplicates_count'] = len(potential_duplicates)
+        response_data['duplicate_warning'] = False
+        response_data['matched_duplicates_count'] = 0
 
         headers = self.get_success_headers(response_data)
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
@@ -222,12 +210,14 @@ class LeadViewSet(viewsets.ModelViewSet):
         duplicates = DuplicateService.find_potential_duplicates(
             email=email,
             phone=phone,
-            exclude_lead_id=exclude_id_int
+            exclude_lead_id=exclude_id_int,
+            user=request.user,
         )
         return Response({
             'has_duplicate': bool(duplicates),
             'count': len(duplicates),
-            'duplicates': duplicates
+            # Only managers may see identifying details for matching records.
+            'duplicates': duplicates if request.user.is_manager else [],
         }, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'])
@@ -267,7 +257,7 @@ class FollowUpViewSet(viewsets.ModelViewSet):
 
         # Role scoping: Managers see all; Counsellors see only assigned leads / tasks
         if not user.is_manager:
-            queryset = queryset.filter(Q(assigned_to=user) | Q(lead__counsellor=user))
+            queryset = queryset.filter(lead__counsellor=user)
 
         lead_id = self.request.query_params.get('lead')
         if lead_id:

@@ -108,7 +108,7 @@ class LeadManagementAPITests(APITestCase):
         token = response.data['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
-    def test_followup_assignee_can_view_but_not_edit_another_counsellors_lead(self):
+    def test_followup_assignee_cannot_view_another_counsellors_lead(self):
         FollowUp.objects.create(
             lead=self.lead_2,
             assigned_to=self.counsellor_1,
@@ -118,11 +118,41 @@ class LeadManagementAPITests(APITestCase):
 
         detail_url = reverse('leads:lead-detail', args=[self.lead_2.id])
         detail_response = self.client.get(detail_url)
-        self.assertEqual(detail_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(detail_response.data['id'], self.lead_2.id)
+        self.assertEqual(detail_response.status_code, status.HTTP_404_NOT_FOUND)
 
         update_response = self.client.patch(detail_url, {'notes': 'Updated by task assignee'})
-        self.assertEqual(update_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(update_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_counsellor_can_edit_their_assigned_lead_details(self):
+        self.authenticate(self.counsellor_1)
+        detail_url = reverse('leads:lead-detail', args=[self.lead_1.id])
+
+        response = self.client.patch(detail_url, {'phone': '9811111199', 'notes': 'Contact details updated'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.lead_1.refresh_from_db()
+        self.assertEqual(self.lead_1.phone, '9811111199')
+        self.assertEqual(self.lead_1.notes, 'Contact details updated')
+
+    def test_counsellor_cannot_create_or_self_assign_a_lead(self):
+        self.authenticate(self.counsellor_1)
+
+        response = self.client.post(self.leads_url, {
+            'first_name': 'New Prospect',
+            'phone': '9811111188',
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(Lead.objects.filter(phone='9811111188').exists())
+
+    def test_counsellor_duplicate_check_does_not_reveal_other_queue(self):
+        self.authenticate(self.counsellor_1)
+
+        response = self.client.get(self.dup_check_url, {'phone': self.lead_2.phone})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['has_duplicate'])
+        self.assertEqual(response.data['duplicates'], [])
 
     # 1. Lead Creation & Auto-Assignment
     def test_01_create_lead_with_round_robin_auto_assignment(self):
@@ -162,15 +192,15 @@ class LeadManagementAPITests(APITestCase):
             'source': LeadSource.PHONE
         }
         res = self.client.post(self.leads_url, payload)
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(res.data['duplicate_warning'])
-        self.assertEqual(res.data['matched_duplicates_count'], 1)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('non_field_errors', res.data)
 
-        # Check duplicate lookup endpoint directly
+        # Check duplicate lookup endpoint directly. The duplicate record is not
+        # created when its phone matches an existing lead.
         check_res = self.client.get(self.dup_check_url, {'phone': '9811111111'})
         self.assertEqual(check_res.status_code, status.HTTP_200_OK)
         self.assertTrue(check_res.data['has_duplicate'])
-        self.assertEqual(check_res.data['count'], 2)  # both rahul leads match
+        self.assertEqual(check_res.data['count'], 1)
 
     # 3. Search Functionality
     def test_03_search_leads(self):

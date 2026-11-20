@@ -49,19 +49,11 @@ class IsManagerOrAssignedCounsellor(permissions.BasePermission):
 
         # Check Lead object
         if hasattr(obj, 'counsellor_id'):
-            if obj.counsellor_id == user.id:
-                return True
-            # Follow-up assignees need to view the related lead to complete
-            # their task, but must not edit or transition another counsellor's
-            # lead.
-            return bool(
-                request.method in permissions.SAFE_METHODS
-                and obj.follow_ups.filter(assigned_to=user).exists()
-            )
+            return obj.counsellor_id == user.id
 
         # Check FollowUp object
         if hasattr(obj, 'assigned_to_id'):
-            return obj.assigned_to_id == user.id or (obj.lead and obj.lead.counsellor_id == user.id)
+            return bool(obj.lead and obj.lead.counsellor_id == user.id)
 
         # Check ActivityLog object
         if hasattr(obj, 'lead') and hasattr(obj.lead, 'counsellor_id'):

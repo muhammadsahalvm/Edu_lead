@@ -1,4 +1,4 @@
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet
 from django.utils import timezone
 from apps.leads.models import Lead, FollowUp, FollowUpStatus
 
@@ -22,7 +22,7 @@ class FollowUpService:
     def get_overdue_followups(cls, user=None, now=None) -> QuerySet[FollowUp]:
         """
         Returns all currently overdue pending follow-ups.
-        If user is provided and not a manager, scopes to user's assigned tasks/leads.
+        If user is a counsellor, scopes to follow-ups for their assigned leads.
         """
         current_time = now or timezone.now()
         queryset = FollowUp.objects.filter(
@@ -31,7 +31,7 @@ class FollowUpService:
         ).select_related('lead', 'assigned_to')
 
         if user and not user.is_manager:
-            queryset = queryset.filter(Q(assigned_to=user) | Q(lead__counsellor=user))
+            queryset = queryset.filter(lead__counsellor=user)
 
         return queryset.order_by('scheduled_at')
 
@@ -47,7 +47,7 @@ class FollowUpService:
         ).select_related('lead', 'assigned_to')
 
         if user and not user.is_manager:
-            queryset = queryset.filter(Q(assigned_to=user) | Q(lead__counsellor=user))
+            queryset = queryset.filter(lead__counsellor=user)
 
         return queryset.order_by('scheduled_at')
 
